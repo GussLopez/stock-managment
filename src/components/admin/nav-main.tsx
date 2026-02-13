@@ -36,14 +36,13 @@ export function NavMain({
 }) {
   const path = usePathname();
   console.log(path);
-  const isActiveClasses = 'bg-secondary'
   const iconActiveClasess = 'text-primary'
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Inventario</SidebarGroupLabel>
       <SidebarMenu>
         <SidebarMenuButton asChild tooltip={'Home'}>
-          <Link href={'/'} className={`${path === '/admin' && isActiveClasses}`}>
+          <Link href={'/admin'} >
             <House className={`${path === '/admin' && iconActiveClasess}`} />
             <span>House</span>
           </Link>
@@ -58,7 +57,7 @@ export function NavMain({
             <SidebarMenuItem>
               <CollapsibleTrigger asChild>
                 <SidebarMenuButton tooltip={item.title}>
-                  {item.icon && <item.icon className="hover:text-primary"/>}
+                  {item.icon && <item.icon className=""/>}
                   <span>{item.title}</span>
                   <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                 </SidebarMenuButton>
