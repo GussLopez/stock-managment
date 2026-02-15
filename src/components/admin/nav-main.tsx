@@ -36,14 +36,14 @@ export function NavMain({
 }) {
   const path = usePathname();
   console.log(path);
-  const iconActiveClasess = 'text-primary'
+  const activeClasses = 'text-primary bg-primary/10 hover:bg-primary/10! hover:text-primary!'
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Inventario</SidebarGroupLabel>
       <SidebarMenu>
         <SidebarMenuButton asChild tooltip={'Home'}>
-          <Link href={'/admin'} >
-            <House className={`${path === '/admin' && iconActiveClasess}`} />
+          <Link href={'/admin'} className={`${path === '/admin' && activeClasses}`} >
+            <House />
             <span>House</span>
           </Link>
         </SidebarMenuButton>
