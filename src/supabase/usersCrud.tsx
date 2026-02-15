@@ -3,6 +3,8 @@ import { supabase } from "./supabase.config"
 
 interface paramsType {
   id_auth: string;
+  fecha_registro: Date;
+  tipo_user: string;
 }
 
 export const InsertUsers = async (p: paramsType) => {
