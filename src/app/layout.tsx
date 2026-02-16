@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Geist } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "next-themes"
 
-const inter = Inter({
+const geist = Geist({
   subsets: ['latin'],
   weight: ["100", "200", "300", "400", "500", "600", "700", "800"]
 })
@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning>
       <body
-        className={`${inter.className} antialiased`}
+        className={`${geist.className} antialiased`}
       >
         <ThemeProvider attribute={'class'} enableSystem defaultTheme="system">
           {children}
