@@ -23,6 +23,8 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { useTheme } from "next-themes"
+import { getSupabaseBrowserClient } from "@/lib/supabase/browser-client"
+import { useRouter } from "next/navigation";
 
 export function NavUser({
   user,
@@ -35,6 +37,12 @@ export function NavUser({
 }) {
   const { isMobile } = useSidebar()
   const { theme, setTheme } = useTheme();
+  const supabase = getSupabaseBrowserClient();
+  const router = useRouter();
+  async function handleSignOut() {
+    await supabase.auth.signOut();
+    router.push('/auth/login');
+  }
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -100,7 +108,7 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleSignOut}>
               <LogOut />
               Log out
             </DropdownMenuItem>
