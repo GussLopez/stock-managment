@@ -138,7 +138,7 @@ export default function Register({ user }: RegisterProps) {
               className="w-full"
             >
               {loading && <Spinner className="size-4.5" />}
-              Sign Up
+              Registrarse
             </Button>
           </div>
         </form>
