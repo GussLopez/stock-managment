@@ -1,5 +1,4 @@
-"use client"
-
+"use client";
 import { BadgeCheck, ChevronsUpDown, CreditCard, LogOut, Moon, Sparkles, Sun } from "lucide-react";
 
 import {
@@ -23,8 +22,8 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { useTheme } from "next-themes"
-import { getSupabaseBrowserClient } from "@/lib/supabase/browser-client"
 import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/AuthStore";
 
 export function NavUser({
   user,
@@ -37,11 +36,12 @@ export function NavUser({
 }) {
   const { isMobile } = useSidebar()
   const { theme, setTheme } = useTheme();
-  const supabase = getSupabaseBrowserClient();
+  const signOut = useAuthStore((state) => state.signOut);
   const router = useRouter();
   async function handleSignOut() {
-    await supabase.auth.signOut();
+    await signOut();
     router.push('/auth/login');
+    router.refresh();  
   }
   return (
     <SidebarMenu>

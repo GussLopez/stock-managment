@@ -1,22 +1,9 @@
-import { supabase } from "@/supabase/supabase.config";
+import { getSupabaseBrowserClient } from "@/lib/supabase/browser-client";
 import { create } from "zustand";
 
-interface signInType {
-  email: string;
-  password: string;
-}
-export const useAuthStore = create((set, get) => ({
-  signInWithEmail: async (p: signInType) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: p.email,
-      password: p.password
-    })
-    if (error) {
-      return null;
-    }
-    return data.user  
-  },
+export const useAuthStore = create(() => ({
   signOut: async () => {
+    const supabase = getSupabaseBrowserClient();
     const { error } = await supabase.auth.signOut();
 
     if (error) {
