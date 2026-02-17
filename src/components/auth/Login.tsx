@@ -62,17 +62,8 @@ export default function Login({ user }: LoginDemoProps) {
     setLoading(false);
   }
   return (
-    <>
-      <header className="flex justify-between items-center px-12 py-3 border-b border-gray-200 dark:border-neutral-800">
-        <BrandLogo />
-        <div>
-          <Link
-            href={'/auth/register'}
-            className="font-medium text-sm hover:text-primary text-neutral-700 dark:text-neutral-200 transition-colors"
-          >Registrate</Link>
-        </div>
-      </header>
-      <div className="max-w-104 mx-auto p-10">
+    <div className="col-span-8">
+      <div className="max-w-104 mx-auto p-10 col-span-8">
         <div className="flex flex-col items-center mb-6">
           <PackageIcon size={60} className="text-primary mb-3" />
           <h1 className="mb-1 text-3xl font-semibold">Accede a tu cuenta</h1>
@@ -149,6 +140,6 @@ export default function Login({ user }: LoginDemoProps) {
             href={'/forgot-password'}>¿Olvidaste tu contraseña?</Link>
         </form>
       </div>
-    </>
+    </div>
   )
 }

@@ -13,6 +13,7 @@ import { Checkbox } from "../ui/checkbox"
 import { useForm } from "react-hook-form"
 import Swal from "sweetalert2"
 import ErrorMessage from "../ui/error-message"
+import { useRouter } from "next/navigation"
 
 interface RegisterProps {
   user: User | null
@@ -24,7 +25,7 @@ interface RegisterForm {
 }
 
 export default function Register({ user }: RegisterProps) {
-  const [status, setStatus] = useState('');
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const supabase = getSupabaseBrowserClient();
   const initialValues: RegisterForm = {
@@ -57,92 +58,84 @@ export default function Register({ user }: RegisterProps) {
           text: "Ocurrio un error al registrarte"
         });
       }
-      console.log({ data });
+      router.push('/auth/login');
+      router.refresh();
     } catch (error) {
       throw new Error('Error al registrar un usuario');
     }
   }
   return (
-    <>
-      <header className="flex justify-between items-center px-12 py-3 border-b border-gray-200 dark:border-neutral-800">
-        <BrandLogo />
-        <div>
-          <Link
-            href={'/auth/login'}
-            className="font-medium text-sm hover:text-primary text-neutral-700 dark:text-neutral-100 transition-colors"
-          >Acceder</Link>
+      <div className="col-span-8">
+        <div className="max-w-104 mx-auto p-10">
+          <div className="flex flex-col items-center mb-6">
+            <PackageIcon size={60} className="text-primary mb-3" />
+            <h1 className="mb-1 text-3xl font-semibold">Crea una cuenta</h1>
+            <p className="text-sm text-gray-600 dark:text-neutral-200">¿Ya tienes cuenta? <Link className="text-primary underline font-medium" href={'/auth/login'}>Inicia sesión</Link></p>
+          </div>
+          <form onSubmit={handleSubmit(handleLogin)} className="space-y-3">
+            <div>
+              <label
+                className="block text-sm font-medium mb-2"
+                htmlFor="nombre">Nombres</label>
+              <Input
+                id="nombre"
+                type="text"
+                aria-invalid={errors.nombre?.message ? 'true' : 'false'}
+                {...register("nombre", {
+                  required: "El nombre es requerido",
+                })}
+              />
+              <ErrorMessage>{errors.nombre?.message}</ErrorMessage>
+            </div>
+            <div>
+              <label
+                className="block text-sm font-medium mb-2"
+                htmlFor="email">Email</label>
+              <Input
+                id="email"
+                type="text"
+                aria-invalid={errors.email?.message ? 'true' : 'false'}
+                {...register("email", {
+                  required: "El email es requerido"
+                })}
+              />
+            </div>
+            <ErrorMessage>{errors.email?.message}</ErrorMessage>
+            <div>
+              <label
+                className="block text-sm font-medium mb-2"
+                htmlFor="name">Contraseña</label>
+              <Input
+                id="name"
+                type="password"
+                aria-invalid={errors.password?.message ? 'true' : 'false'}
+                {...register("password", {
+                  required: "La contraseña es requerida"
+                })}
+              />
+              <ErrorMessage>{errors.password?.message}</ErrorMessage>
+            </div>
+            <div className="flex gap-2 items-center mb-8">
+              <Checkbox />
+              <label
+                htmlFor="remember"
+                className="text-sm text-gray-600 dark:text-neutral-100"
+              >
+                Acepto <Link href={'/'} className="hover:underline">términos y condiciones</Link>
+              </label>
+            </div>
+            <div>
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full"
+              >
+                {loading && <Spinner className="size-4.5" />}
+                Registrarse
+              </Button>
+            </div>
+          </form>
         </div>
-      </header>
-      <div className="max-w-104 mx-auto p-10">
-        <div className="flex flex-col items-center mb-6">
-          <PackageIcon size={60} className="text-primary mb-3" />
-          <h1 className="mb-1 text-3xl font-semibold">Crea una cuenta</h1>
-          <p className="text-sm text-gray-600 dark:text-neutral-200">¿Ya tienes cuenta? <Link className="text-primary underline font-medium" href={'/auth/login'}>Inicia sesión</Link></p>
-        </div>
-        <form onSubmit={handleSubmit(handleLogin)} className="space-y-3">
-          <div>
-            <label
-              className="block text-sm font-medium mb-2"
-              htmlFor="nombre">Nombres</label>
-            <Input
-              id="nombre"
-              type="text"
-              aria-invalid={errors.nombre?.message ? 'true' : 'false'}
-              {...register("nombre", {
-                required: "El nombre es requerido",
-              })}
-            />
-           <ErrorMessage>{errors.nombre?.message}</ErrorMessage> 
-          </div>
-          <div>
-            <label
-              className="block text-sm font-medium mb-2"
-              htmlFor="email">Email</label>
-            <Input
-              id="email"
-              type="text"
-              aria-invalid={errors.email?.message ? 'true' : 'false'}
-              {...register("email", {
-                required: "El email es requerido"
-              })}
-            />
-          </div>
-          <ErrorMessage>{errors.email?.message}</ErrorMessage>
-          <div>
-            <label
-              className="block text-sm font-medium mb-2"
-              htmlFor="name">Contraseña</label>
-            <Input
-              id="name"
-              type="password"
-              aria-invalid={errors.password?.message ? 'true' : 'false'}
-              {...register("password", {
-                required: "La contraseña es requerida"
-              })}
-            />
-            <ErrorMessage>{errors.password?.message}</ErrorMessage> 
-          </div>
-          <div className="flex gap-2 items-center mb-8">
-            <Checkbox />
-            <label
-              htmlFor="remember"
-              className="text-sm text-gray-600 dark:text-neutral-100"
-            >
-              Acepto <Link href={'/'} className="hover:underline">términos y condiciones</Link>
-            </label>
-          </div>
-          <div>
-            <Button
-              type="submit"
-              disabled={loading}
-              className="w-full"
-            >
-              {loading && <Spinner className="size-4.5" />}
-              Registrarse
-            </Button>
-          </div>
-        </form>
-      </div>
-    </>
+    </div>
   )
 }
