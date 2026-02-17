@@ -14,6 +14,7 @@ import { Spinner } from "../ui/spinner"
 import { useForm } from "react-hook-form"
 import ErrorMessage from "../ui/error-message"
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert"
+import { EyeIcon, EyeOffIcon } from "lucide-react"
 
 interface LoginDemoProps {
   user: User | null
@@ -26,7 +27,8 @@ interface LoginForm {
 export default function Login({ user }: LoginDemoProps) {
   const [loading, setLoading] = useState(false);
   const supabase = getSupabaseBrowserClient();
-  const [authError, setAuthError] = useState<string | null>(null)
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
   const router = useRouter();
   const initialValues: LoginForm = {
     email: "",
@@ -91,6 +93,7 @@ export default function Login({ user }: LoginDemoProps) {
             <Input
               id="email"
               type="text"
+              aria-invalid={errors.email?.message ? 'true' : 'false'}
               {...register("email", {
                 required: "El email es requerido"
               })}
@@ -101,13 +104,26 @@ export default function Login({ user }: LoginDemoProps) {
             <label
               className="block text-sm font-medium mb-2"
               htmlFor="name">Password</label>
-            <Input
-              id="name"
-              type="password"
-              {...register("password", {
-                required: 'La contraseña es requerida'
-              })}
-            />
+            <div className="relative">
+              <Input
+                id="name"
+                aria-invalid={errors.password?.message ? "true" : "false"}
+                type={isVisible ? 'text' : 'password'}
+                {...register("password", {
+                  required: 'La contraseña es requerida'
+                })}
+              />
+              <Button
+                variant='ghost'
+                type="button"
+                size='icon'
+                onClick={() => setIsVisible(prevState => !prevState)}
+                className='text-muted-foreground focus-visible:ring-ring/50 absolute inset-y-0 right-0 rounded-l-none hover:bg-transparent'
+              >
+                {isVisible ? <EyeOffIcon /> : <EyeIcon />}
+                <span className='sr-only'>{isVisible ? 'Hide password' : 'Show password'}</span>
+              </Button>
+            </div>
             <ErrorMessage>{errors.password?.message}</ErrorMessage>
           </div>
           <div className="flex gap-2 items-center mb-8">

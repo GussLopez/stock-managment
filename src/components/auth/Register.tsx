@@ -87,6 +87,7 @@ export default function Register({ user }: RegisterProps) {
             <Input
               id="nombre"
               type="text"
+              aria-invalid={errors.nombre?.message ? 'true' : 'false'}
               {...register("nombre", {
                 required: "El nombre es requerido",
               })}
@@ -100,6 +101,7 @@ export default function Register({ user }: RegisterProps) {
             <Input
               id="email"
               type="text"
+              aria-invalid={errors.email?.message ? 'true' : 'false'}
               {...register("email", {
                 required: "El email es requerido"
               })}
@@ -113,6 +115,7 @@ export default function Register({ user }: RegisterProps) {
             <Input
               id="name"
               type="password"
+              aria-invalid={errors.password?.message ? 'true' : 'false'}
               {...register("password", {
                 required: "La contraseña es requerida"
               })}
