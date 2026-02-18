@@ -35,7 +35,6 @@ export function NavMain({
   }[]
 }) {
   const path = usePathname();
-  console.log(path);
   const activeClasses = 'text-primary bg-primary/10 hover:bg-primary/10! hover:text-primary!'
   return (
     <SidebarGroup>
