@@ -41,7 +41,7 @@ export default function Register({ user }: RegisterProps) {
     try {
       setLoading(true);
       const { email, password, nombre } = formData;
-      const { error, data } = await supabase.auth.signUp({
+      const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {

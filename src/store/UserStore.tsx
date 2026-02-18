@@ -1,26 +1,27 @@
-import { supabase } from "@/supabase/supabase.config";
-import { InsertUsers } from "@/supabase/usersCrud";
 import { create } from "zustand";
 
-interface signUpType {
-  email: string;
-  password: string;
+interface UserState {
+  id: string | null;
+  email: string | null;
+  nombres: string | null;
+  setUser: (user: { id: string; email: string; nombres: string }) => void;
+  clearUser: () => void;
 }
-export const useUserStore = create((set, get) => ({
-  insertUserAdmin: async (p: signUpType) => {
-    const { data, error } = await supabase.auth.signUp({
-      email: p.email,
-      password: p.password,
-    });
 
-    if (error || !data.user) return null;
+export const useUserStore = create<UserState>((set) => ({
+  id: null,
+  email: null,
+  nombres: null,
 
-    console.log("data del primer user: ", data);
+  setUser: (user) => set({
+    id: user.id,
+    email: user.email,
+    nombres: user.nombres
+  }),
 
-    await InsertUsers({ 
-      id_auth: data.user.id,
-      fecha_registro: new Date(),
-      tipo_user: 'admin'
-    })
-  }
-}))
+  clearUser: () => set({
+    id: null,
+    email: null,
+    nombres: null
+  }),
+}));

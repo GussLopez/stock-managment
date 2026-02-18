@@ -1,8 +1,8 @@
-'use client' 
+'use client'
 
-import { supabase } from "@/supabase/supabase.config";
 import { createContext, useContext, useEffect, useState } from "react";
-import { User, Session, AuthChangeEvent } from "@supabase/supabase-js";
+import { User } from "@supabase/supabase-js";
+import { getSupabaseBrowserClient } from "@/lib/supabase/browser-client";
 
 type AuthContextType = {
   user: User | null;
@@ -12,22 +12,24 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const supabase = getSupabaseBrowserClient();
 
   useEffect(() => {
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      (event: AuthChangeEvent, session: Session | null) => {
-        console.log(event, session);
+    const getInitialSession = async () => {
+      const { data } = await supabase.auth.getUser();
+      setUser(data.user);
+    };
 
-        if (session?.user == null) {
-          setUser(null);
-        } else {
-          setUser(session.user);
-        }
-      }
-    );
+    getInitialSession();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
 
     return () => {
-      listener.subscription.unsubscribe();
+      subscription.unsubscribe();
     };
   }, []);
 
@@ -38,11 +40,11 @@ export const AuthContextProvider = ({ children }: { children: React.ReactNode })
   );
 };
 
-export const UserAuth = () => {
+export const useUserAuth = () => {
   const context = useContext(AuthContext);
 
   if (!context) {
-    throw new Error("UserAuth must be used within an AuthContextProvider");
+    throw new Error("useUserAuth must be used within AuthContextProvider");
   }
 
   return context;
