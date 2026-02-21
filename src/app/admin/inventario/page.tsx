@@ -1,0 +1,22 @@
+import AddProduct from "@/components/products/AddProduct";
+import { Box } from "lucide-react";
+
+export default function InventarioPage() {
+
+  return (
+    <div>
+      <div>
+        <div className="flex items-center gap-3">
+          <div>
+            <Box size={30} />
+          </div>
+          <h1 className="text-3xl font-semibold">Inventario</h1>
+        </div>
+
+        <div>
+          <AddProduct />
+        </div>
+      </div>
+    </div>
+  )
+}
