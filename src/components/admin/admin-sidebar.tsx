@@ -125,9 +125,9 @@ const data = {
   ],
   projects: [
     {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
+      name: "Inventario",
+      url: "/admin/inventario",
+      icon: Package,
     },
     {
       name: "Sales & Marketing",
