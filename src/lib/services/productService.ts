@@ -19,6 +19,7 @@ export async function createProduct(product: any) {
     .from("products")
     .insert(product);
 
+    console.log(error);
     if (error) throw error;
 }
 
