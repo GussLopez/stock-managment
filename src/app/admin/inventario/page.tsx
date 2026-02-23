@@ -5,7 +5,7 @@ export default function InventarioPage() {
 
   return (
     <div>
-      <div>
+      <div className="flex justify-between">
         <div className="flex items-center gap-3">
           <div>
             <Box size={30} />
