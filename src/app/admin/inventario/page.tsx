@@ -1,4 +1,5 @@
 import AddProduct from "@/components/products/AddProduct";
+import ProductTable from "@/components/products/ProductTable";
 import { Box } from "lucide-react";
 
 export default function InventarioPage() {
@@ -16,6 +17,9 @@ export default function InventarioPage() {
         <div>
           <AddProduct />
         </div>
+      </div>
+      <div>
+        <ProductTable />
       </div>
     </div>
   )
