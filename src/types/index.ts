@@ -1,0 +1,1 @@
+export type { ProductForm } from './Product'
