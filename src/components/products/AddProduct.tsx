@@ -1,26 +1,60 @@
-import { Image, Plus } from "lucide-react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
-import { Button } from "../animate-ui/components/buttons/button";
+'use client'
+
+import { Plus } from "lucide-react";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
+import { Button as CustomBtn } from "../animate-ui/components/buttons/button";
 import { Tabs, TabsContent, TabsContents, TabsList, TabsTrigger } from "../animate-ui/components/animate/tabs";
+import ProductGeneral from "./createProduct/ProductGeneral";
+import ProductDetails from "./createProduct/ProductDetails";
+import ProductPrices from "./createProduct/ProductPrices";
+import ProductStock from "./createProduct/ProductStock";
+import { Button } from "../ui/button";
+import { createProduct } from "@/lib/services/productService";
+import { useState } from "react";
+import { ProductForm } from "@/types";
+
 
 export default function AddProduct() {
+  const initialFormData: ProductForm = {
+    name: '',
+    description: '',
+    price: 0,
+    cost: 0,
+    stock: 0,
+    min_stock: 0,
+    sku: '',
+    model: '',
+  }
+  const [formData, setFormData] = useState(initialFormData);
+  
+  const updateForm = (data: Partial<ProductForm>) =>
+    setFormData(prev => ({ ...prev, ...data }))
+
+  const handleCreate = async () => {
+    try {
+      await createProduct(formData);
+    } catch (error) {
+      console.log('Error: ', error);
+    }
+
+  }
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>
+        <CustomBtn>
           <Plus />
           Agregar
-        </Button>
+        </CustomBtn>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-h-[70vh] overflow-y-scroll scrollbar-hide lg:overflow-y-hidden lg:min-w-200 px-2 lg:p-6">
         <DialogHeader>
           <DialogTitle>Añadir nuevo producto</DialogTitle>
           <DialogDescription>Completa los campos con la información del producto para crearlo</DialogDescription>
         </DialogHeader>
 
         <Tabs>
-          <TabsList className="w-full mb-4">
+          <TabsList className="w-full mb-1 lg:mb-4">
             <TabsTrigger value={'general'}>General</TabsTrigger>
             <TabsTrigger value={'detalles'}>Detalles</TabsTrigger>
             <TabsTrigger value={'precios'}>Precios</TabsTrigger>
@@ -28,29 +62,27 @@ export default function AddProduct() {
           </TabsList>
           <TabsContents>
             <TabsContent value="general">
-              <div>
-                <div className="flex items-center justify-center w-60 h-60 border-2 border-dashed rounded-lg border-gray-300 text-gray-300 hover:text-gray-700">
-                  <Image />
-                </div>
-              </div>
+              <ProductGeneral formData={formData} onChange={updateForm} />
             </TabsContent>
             <TabsContent value="detalles">
-              <div>
-                Detalles
-              </div>
+              <ProductDetails formData={formData} onChange={updateForm} />
             </TabsContent>
             <TabsContent value="precios">
-              <div>
-                Precios
-              </div>
+              <ProductPrices formData={formData} onChange={updateForm} />
             </TabsContent>
             <TabsContent value="inventario">
-              <div>
-                Inventario
-              </div>
+              <ProductStock formData={formData} onChange={updateForm} />
             </TabsContent>
           </TabsContents>
         </Tabs>
+        <DialogFooter className="mt-1">
+          <DialogClose asChild>
+            <Button className="w-full sm:w-auto" variant={"outline"}>Cancelar</Button>
+          </DialogClose>
+          <Button onClick={handleCreate}>
+            Guardar
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   )
