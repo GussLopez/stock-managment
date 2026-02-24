@@ -3,6 +3,7 @@ import { Geist } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "next-themes"
 import Providers from "./Providers";
+import { Toaster } from "sileo";
 
 const geist = Geist({
   subsets: ['latin'],
@@ -27,6 +28,7 @@ export default function RootLayout({
           <Providers>
             {children}
           </Providers>
+          <Toaster position="bottom-right" />
         </ThemeProvider>
       </body>
     </html>
