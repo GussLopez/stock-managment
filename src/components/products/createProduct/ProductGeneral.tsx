@@ -13,8 +13,8 @@ export default function ProductGeneral({ formData, onChange }: productGeneralPro
   return (
 
     <div className="lg:grid grid-cols-12 lg:gap-4 p-2">
-      <div className="w-full lg:w-auto h-60 lg:h-auto lg:col-span-4 flex items-center justify-center border-2 border-dashed rounded-lg border-gray-300 text-gray-300 hover:text-gray-400 hover:bg-gray-50 transition-all duration-300">
-        <Image />
+      <div className="w-full lg:w-auto h-60 lg:h-auto lg:col-span-4 flex items-center justify-center border-2 border-dashed rounded-lg text-muted hover:text-gray-300 hover:bg-accent/40 cursor-pointer transition-all duration-300">
+        <Image className="size-8"/>
       </div>
       <div className="mt-3 lg:mt-0 lg:col-span-8">
         <div className="lg:grid lg:grid-cols-2 gap-3 space-y-2">

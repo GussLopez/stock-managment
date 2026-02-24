@@ -33,7 +33,7 @@ export default function ProductPrices({ formData, onChange }: ProductPricesProps
           value={formData.price}
         />
       </div>
-      <div className="col-span-2 flex justify-between border border-gray-200 rounded-lg px-3 py-4">
+      <div className="col-span-2 flex justify-between px-3 py-4 mt-4 rounded-lg border">
         <div className="flex items-center gap-2 text-sm font-medium">
           <TrendUpIcon size={20} weight="bold" className={`${isProfit ? 'text-green-600' : 'text-red-600'}`} />
           Ganancia Estimada (MXN)

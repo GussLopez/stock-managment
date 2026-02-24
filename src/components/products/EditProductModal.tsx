@@ -1,21 +1,35 @@
-'use client'
-
-import { Plus } from "lucide-react";
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
-import { Button as CustomBtn } from "../animate-ui/components/buttons/button";
+'use client';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "../ui/dialog";
 import { Tabs, TabsContent, TabsContents, TabsList, TabsTrigger } from "../animate-ui/components/animate/tabs";
 import ProductGeneral from "./createProduct/ProductGeneral";
 import ProductDetails from "./createProduct/ProductDetails";
 import ProductPrices from "./createProduct/ProductPrices";
 import ProductStock from "./createProduct/ProductStock";
 import { Button } from "../ui/button";
-import { createProduct } from "@/lib/services/productService";
-import { useState } from "react";
+import { getProductById, updateProduct } from "@/lib/services/productService";
+import { useEffect, useState } from "react";
 import { ProductForm } from "@/types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { sileo } from "sileo";
+
+interface EditModalProps {
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  productId: string
+}
 
 
-export default function AddProduct() {
-  const initialFormData: ProductForm = {
+export default function EditProductModal({ open, setOpen, productId }: EditModalProps) {
+  const queryClient = useQueryClient()
+  const [formData, setFormData] = useState<ProductForm>({
     name: '',
     description: '',
     price: 0,
@@ -25,33 +39,56 @@ export default function AddProduct() {
     sku: '',
     model: '',
     image: null
-  }
-  const [formData, setFormData] = useState(initialFormData);
-  
+  });
+  const { data: product, isLoading, error } = useQuery({
+    queryKey: ["product", productId],
+    queryFn: () => getProductById(productId),
+    enabled: open && !!productId,
+  });
+
+  useEffect(() => {
+    if (product) {
+      setFormData({
+        name: product.name || '',
+        description: product.description || '',
+        price: product.price || 0,
+        cost: product.cost || 0,
+        stock: product.stock || 0,
+        min_stock: product.min_stock || 0,
+        sku: product.sku || '',
+        model: product.model || '',
+        image: null
+      });
+    }
+  }, [product]);
   const updateForm = (data: Partial<ProductForm>) =>
     setFormData(prev => ({ ...prev, ...data }))
 
-  const handleCreate = async () => {
-    try {
-      await createProduct(formData);
-    } catch (error) {
-      console.log('Error: ', error);
-    }
+  const mutation = useMutation({
+    mutationFn: async () => await updateProduct(productId, formData),
+    onSuccess: () => {
+      sileo.show({ title: 'Cambios guardados' })
+      queryClient.invalidateQueries({ queryKey: ["stockProducts"] })
+    },
+    onError: (error) => {
+      sileo.error({
+        title: "Algo salió mal",
+        description: "Por favor intente más tarde.",
+      });
+      console.error(error)
+    },
+  })
 
+  const handleEdit = async () => {
+    mutation.mutate()
   }
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <CustomBtn>
-          <Plus />
-          Agregar
-        </CustomBtn>
-      </DialogTrigger>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="max-h-[70vh] overflow-y-scroll scrollbar-hide lg:overflow-y-hidden lg:min-w-200 px-2 lg:p-6">
         <DialogHeader>
-          <DialogTitle>Añadir nuevo producto</DialogTitle>
-          <DialogDescription>Completa los campos con la información del producto para crearlo</DialogDescription>
+          <DialogTitle>Editar producto</DialogTitle>
+          <DialogDescription>Completa los campos con la información del producto para editarlo</DialogDescription>
         </DialogHeader>
 
         <Tabs>
@@ -80,7 +117,7 @@ export default function AddProduct() {
           <DialogClose asChild>
             <Button className="w-full sm:w-auto" variant={"outline"}>Cancelar</Button>
           </DialogClose>
-          <Button onClick={handleCreate}>
+          <Button onClick={handleEdit}>
             Guardar
           </Button>
         </DialogFooter>
