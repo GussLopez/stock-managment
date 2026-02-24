@@ -5,12 +5,24 @@ const supabase = getSupabaseBrowserClient();
 export async function getProducts() {
   const { data, error } = await supabase
     .from("products")
-    .select("*")
+    .select("id, name, price, stock, image")
     .order("created_at", { ascending: false });
 
     if (error) throw error
 
     return data;
+}
+
+export async function getProductById(id: string) {
+  const { data, error } = await supabase
+    .from("products")
+    .select("*")
+    .eq('id', id)
+    .single();
+
+  if (error) throw error;
+
+  return data;
 }
 
 export async function createProduct(product: any) {
@@ -19,7 +31,6 @@ export async function createProduct(product: any) {
     .from("products")
     .insert(product);
 
-    console.log(error);
     if (error) throw error;
 }
 
