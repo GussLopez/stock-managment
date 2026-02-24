@@ -7,7 +7,6 @@ import { Skeleton } from "../ui/skeleton";
 import ViewProductModal from "./ViewPrductModal";
 import { useState } from "react";
 import { Button } from "../ui/button";
-import { DotsThreeIcon } from "@phosphor-icons/react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import EditProductModal from "./EditProductModal";
 
@@ -28,7 +27,7 @@ export default function ProductTable() {
   const totalInventario = data?.reduce((acc, product) => {
     return acc + (product.price * product.stock);
   }, 0) || 0;
-  
+
   return (
     <div className="rounded-md border  mt-6">
       <Table className="w-full">
@@ -68,8 +67,8 @@ export default function ProductTable() {
                     <div
                       className="p-2 w-fit rounded-sm cursor-pointer bg-accent"
                       onClick={() => {
-                        setOpen(true)
                         setSelectedProduct(product.id);
+                        setOpen(true)
                       }}
                     >
                       <Image className="size-6 text-muted-foreground" />
@@ -95,8 +94,8 @@ export default function ProductTable() {
                           <DropdownMenuGroup>
                             <DropdownMenuLabel className="text-xs">Acciones</DropdownMenuLabel>
                             <DropdownMenuItem onClick={() => {
-                              setOpenEditModal(true);
                               setSelectedProduct(product.id)
+                              setOpenEditModal(true);
                             }}>
                               <PencilIcon />
                               Editar
@@ -129,8 +128,20 @@ export default function ProductTable() {
           </TableRow>
         </TableFooter>
       </Table>
-      <EditProductModal open={openEditModal} setOpen={setOpenEditModal} productId={selectedProduct!} />
-      <ViewProductModal open={open} setOpen={setOpen} productId={selectedProduct!} />
+      {selectedProduct && (
+        <EditProductModal
+          open={openEditModal}
+          setOpen={setOpenEditModal}
+          productId={selectedProduct}
+        />
+      )}
+      {selectedProduct && (
+        <ViewProductModal
+          open={open}
+          setOpen={setOpen}
+          productId={selectedProduct}
+        />
+      )}
     </div >
   );
 }

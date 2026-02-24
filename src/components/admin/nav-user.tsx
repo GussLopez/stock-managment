@@ -105,9 +105,9 @@ export function NavUser() {
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
                 {theme === 'dark' ? (
-                  <Moon className="" />
+                  <Moon />
                 ) : (
-                  <Sun className="" />
+                  <Sun />
                 )}
                 Cambiar tema
               </DropdownMenuItem>
