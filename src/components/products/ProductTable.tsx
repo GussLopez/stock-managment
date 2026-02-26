@@ -15,6 +15,8 @@ interface ProductTableProps {
     name: string;
     price: number;
     stock: number;
+    sku: string; 
+    cost: number;
     image: string | null;
   }[]
   isLoading: boolean;
@@ -26,7 +28,14 @@ export default function ProductTable({ data, isLoading, totalInventario }: Produ
   const [openEditModal, setOpenEditModal] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<string | null>(null)
 
-
+  const handleCloseEdit = (value: boolean) => {
+    setOpenEditModal(value)
+    if (!value) setSelectedProduct(null)
+  }
+  const handleCloseView = (value: boolean) => {
+    setOpen(value)
+    if (!value) setSelectedProduct(null)
+  }
   return (
     <div className="rounded-md border  mt-6">
       <Table className="w-full">
@@ -40,8 +49,6 @@ export default function ProductTable({ data, isLoading, totalInventario }: Produ
           </TableRow>
         </TableHeader>
         <TableBody>
-
-
           {isLoading ? (
             <>
               {[...Array(5)].map((_, i) => (
@@ -74,12 +81,11 @@ export default function ProductTable({ data, isLoading, totalInventario }: Produ
                     </div>
                   </TableCell>
                   <TableCell>{product.name}</TableCell>
-                  <TableCell>$ {product.price.toFixed(2)}</TableCell>
+                  <TableCell>$ {product.price.toLocaleString()}</TableCell>
                   <TableCell>{product.stock}</TableCell>
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-3 justify-between">
-                      <span>$ {(product.price * product.stock).toFixed(2)} MXN</span>
-
+                      <span>$ {(product.price * product.stock).toLocaleString()} MXN</span>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button
@@ -123,21 +129,21 @@ export default function ProductTable({ data, isLoading, totalInventario }: Produ
         <TableFooter>
           <TableRow className="font-bold">
             <TableCell colSpan={4}>Total</TableCell>
-            <TableCell className="text-right">$ {totalInventario.toFixed(2)} MXN</TableCell>
+            <TableCell className="text-right">$ {totalInventario.toLocaleString()} MXN</TableCell>
           </TableRow>
         </TableFooter>
       </Table>
       {selectedProduct && (
         <EditProductModal
           open={openEditModal}
-          setOpen={setOpenEditModal}
+          setOpen={handleCloseEdit}
           productId={selectedProduct}
         />
       )}
       {selectedProduct && (
         <ViewProductModal
           open={open}
-          setOpen={setOpen}
+          setOpen={handleCloseView}
           productId={selectedProduct}
         />
       )}

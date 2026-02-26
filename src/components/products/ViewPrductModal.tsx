@@ -16,7 +16,8 @@ export default function ViewProductModal({ open, setOpen, productId }: ModalProp
   const { data: product, isLoading, error } = useQuery({
     queryKey: ["product", productId],
     queryFn: () => getProductById(productId),
-    enabled: open && !!productId,
+    enabled: Boolean(open && productId),
+    staleTime: 0,
   });
 
   const profit = (product?.price ?? 0) - (product?.cost ?? 0);
