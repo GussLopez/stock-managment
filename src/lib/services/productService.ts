@@ -5,7 +5,7 @@ const supabase = getSupabaseBrowserClient();
 export async function getProducts() {
   const { data, error } = await supabase
     .from("products")
-    .select("id, name, price, stock, image")
+    .select("id, name, price, stock, sku, cost, image")
     .order("created_at", { ascending: false });
 
     if (error) throw error
