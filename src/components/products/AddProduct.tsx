@@ -12,6 +12,9 @@ import { Button } from "../ui/button";
 import { createProduct } from "@/lib/services/productService";
 import { useState } from "react";
 import { ProductForm } from "@/types";
+import { useQueryClient } from "@tanstack/react-query";
+import { Spinner } from "../ui/spinner";
+import { sileo } from "sileo";
 
 
 export default function AddProduct() {
@@ -27,14 +30,27 @@ export default function AddProduct() {
     image: null
   }
   const [formData, setFormData] = useState(initialFormData);
-  
+  const queryClient = useQueryClient();
+  const [loading, setLoading] = useState(false);
   const updateForm = (data: Partial<ProductForm>) =>
     setFormData(prev => ({ ...prev, ...data }))
 
   const handleCreate = async () => {
     try {
+      setLoading(true);
       await createProduct(formData);
+      queryClient.invalidateQueries({ queryKey: ["StockProducts"] });
+      setLoading(false);
+      sileo.show({
+        title: 'Producto guardado',
+        description: 'El producto se creó y se guardó correctamente'
+      })
     } catch (error) {
+      setLoading(false);
+      sileo.error({
+        title: "Algo salió mal",
+        description: "Por favor intente más tarde.",
+      });
       console.log('Error: ', error);
     }
 
@@ -80,8 +96,16 @@ export default function AddProduct() {
           <DialogClose asChild>
             <Button className="w-full sm:w-auto" variant={"outline"}>Cancelar</Button>
           </DialogClose>
-          <Button onClick={handleCreate}>
-            Guardar
+          <Button
+            disabled={loading}
+            onClick={handleCreate}
+          >
+            {loading ? (
+              <>
+                <Spinner />
+                Guardando
+              </>
+            ) : 'Guardar'}
           </Button>
         </DialogFooter>
       </DialogContent>
