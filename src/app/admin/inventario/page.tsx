@@ -7,6 +7,7 @@ import { Box } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getProducts } from "@/lib/services/productService";
 import { useQuery } from "@tanstack/react-query";
+import CardView from "@/components/products/CardView";
 
 export default function InventarioPage() {
   const [view, setView] = useState("table")
@@ -62,7 +63,7 @@ export default function InventarioPage() {
       </div>
       <div className="mt-6">
         {data && view === "table" && <ProductTable data={data} isLoading={isLoading} totalInventario={totalInventario} />}
-        {data && view === "card" && <p>Cards</p>}
+        {data && view === "card" && <CardView data={data} isLoading={isLoading} totalInventario={totalInventario} />}
       </div>
     </div>
   )
