@@ -5,6 +5,8 @@ import ProductTable from "@/components/products/ProductTable";
 import { ListDashesIcon, SquaresFourIcon } from "@phosphor-icons/react";
 import { Box } from "lucide-react";
 import { useEffect, useState } from "react";
+import { getProducts } from "@/lib/services/productService";
+import { useQuery } from "@tanstack/react-query";
 
 export default function InventarioPage() {
   const [view, setView] = useState("table")
@@ -20,6 +22,20 @@ export default function InventarioPage() {
     setView(value)
     localStorage.setItem("inventory-view", value)
   }
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["StockProducts"],
+    queryFn: async () => {
+      const data = await getProducts();
+      return data;
+    },
+    retry: 1,
+    refetchOnWindowFocus: false
+  })
+
+  const totalInventario = data?.reduce((acc, product) => {
+    return acc + (product.price * product.stock);
+  }, 0) || 0;
   return (
     <div>
       <div className="flex justify-between">
@@ -45,8 +61,8 @@ export default function InventarioPage() {
         </div>
       </div>
       <div className="mt-6">
-        {view === "table" && <ProductTable />}
-        {view === "card" && <p>Cards</p>}
+        {data && view === "table" && <ProductTable data={data} isLoading={isLoading} totalInventario={totalInventario} />}
+        {data && view === "card" && <p>Cards</p>}
       </div>
     </div>
   )
