@@ -1,73 +1,9 @@
-'use client'
+'use client';
+import { DollarSign, ScanBarcode, ShoppingCart } from 'lucide-react'
+import ComboboxSearchProduct from '@/components/shadcn-studio/combobox/combobox-01'
+import { Input } from '@/components/ui/input';
 
-import { ScanBarcode, ShoppingCart } from 'lucide-react'
-import { useEffect, useState } from 'react'
-
-import { Button } from '@/components/ui/button'
-interface Product {
-  id: string
-  name: string
-  price: number
-}
-
-interface SaleItem {
-  product_id: string
-  quantity: number
-}
-
-export default function NuevaVenta() {
-  const countries = [
-    { code: "", value: "", continent: "", label: "Select country" },
-    {
-      code: "ar",
-      value: "argentina",
-      label: "Argentina",
-      continent: "South America",
-    },
-    { code: "au", value: "australia", label: "Australia", continent: "Oceania" },
-    { code: "br", value: "brazil", label: "Brazil", continent: "South America" },
-    { code: "ca", value: "canada", label: "Canada", continent: "North America" },
-    { code: "cn", value: "china", label: "China", continent: "Asia" },
-    {
-      code: "co",
-      value: "colombia",
-      label: "Colombia",
-      continent: "South America",
-    },
-    { code: "eg", value: "egypt", label: "Egypt", continent: "Africa" },
-    { code: "fr", value: "france", label: "France", continent: "Europe" },
-    { code: "de", value: "germany", label: "Germany", continent: "Europe" },
-    { code: "it", value: "italy", label: "Italy", continent: "Europe" },
-    { code: "jp", value: "japan", label: "Japan", continent: "Asia" },
-    { code: "ke", value: "kenya", label: "Kenya", continent: "Africa" },
-    { code: "mx", value: "mexico", label: "Mexico", continent: "North America" },
-    {
-      code: "nz",
-      value: "new-zealand",
-      label: "New Zealand",
-      continent: "Oceania",
-    },
-    { code: "ng", value: "nigeria", label: "Nigeria", continent: "Africa" },
-    {
-      code: "za",
-      value: "south-africa",
-      label: "South Africa",
-      continent: "Africa",
-    },
-    { code: "kr", value: "south-korea", label: "South Korea", continent: "Asia" },
-    {
-      code: "gb",
-      value: "united-kingdom",
-      label: "United Kingdom",
-      continent: "Europe",
-    },
-    {
-      code: "us",
-      value: "united-states",
-      label: "United States",
-      continent: "North America",
-    },
-  ]
+export default function VentasPage() {
 
   return (
     <div>
@@ -83,7 +19,29 @@ export default function NuevaVenta() {
             <ScanBarcode />
             <h2 className='font-semibold text-lg'>Agregar Items</h2>
           </div>
-          
+          <div className='grid grid-cols-8 mt-4 text-xs font-medium text-muted-foreground'>
+            <div className='col-span-4'>
+              <p>Buscar producto</p>
+              <ComboboxSearchProduct />
+            </div>
+            <div className='col-span-2'>
+              <p>Precio de venta</p>
+              <div className='relative'>
+                <Input
+                  className='pl-9'
+                  type='number'
+                />
+                <DollarSign className='absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
+              </div>
+            </div>
+
+            <div className='col-span-2'>
+              <p>Cant.</p>
+              <Input
+
+              />
+            </div>
+          </div>
         </div>
 
 
