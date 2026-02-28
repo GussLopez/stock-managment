@@ -1,152 +1,142 @@
-'use client';
-
+'use client';;
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "../ui/table";
-import { Image, MoreHorizontal, PencilIcon, SlidersHorizontal, TrashIcon } from "lucide-react";
+import { Image, MoreHorizontal, PencilIcon, SlidersHorizontal, Trash2Icon } from "lucide-react";
 import { Skeleton } from "../ui/skeleton";
-import ViewProductModal from "./ViewPrductModal";
-import { useState } from "react";
 import { Button } from "../ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
-import EditProductModal from "./EditProductModal";
+import { Product } from "@/types";
 
 interface ProductTableProps {
-  data: {
-    id: string;
-    name: string;
-    price: number;
-    stock: number;
-    sku: string; 
-    cost: number;
-    image: string | null;
-  }[]
-  isLoading: boolean;
-  totalInventario: number
+  data: Product[]
+  isLoading?: boolean;
+  totalInventario: number;
+  onEdit: (product: Product) => void;
+  onDelete: (product: Product) => void
+  onView: (product: Product) => void
 }
 
-export default function ProductTable({ data, isLoading, totalInventario }: ProductTableProps) {
-  const [open, setOpen] = useState(false);
-  const [openEditModal, setOpenEditModal] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<string | null>(null)
-
-  const handleCloseEdit = (value: boolean) => {
-    setOpenEditModal(value)
-    if (!value) setSelectedProduct(null)
-  }
-  const handleCloseView = (value: boolean) => {
-    setOpen(value)
-    if (!value) setSelectedProduct(null)
-  }
+export default function ProductTable({ data, isLoading, totalInventario, onEdit, onDelete, onView }: ProductTableProps) {
   return (
-    <div className="rounded-md border  mt-6">
+    <div className="rounded-md border border-muted mt-6 overflow-hidden bg-card">
       <Table className="w-full">
-        <TableHeader>
-          <TableRow>
-            <TableHead>Imagen</TableHead>
-            <TableHead className="w-[40%]">Nombre</TableHead>
-            <TableHead>Precio</TableHead>
-            <TableHead>Stock</TableHead>
-            <TableHead>Total</TableHead>
+        <TableHeader className="bg-muted/30">
+          <TableRow className="hover:bg-transparent">
+            <TableHead className="w-20 text-center">Imagen</TableHead>
+            <TableHead className="w-[35%]">Producto</TableHead>
+            <TableHead className="text-right">Precio</TableHead>
+            <TableHead className="text-center">Stock</TableHead>
+            <TableHead className="text-right">Valor Total</TableHead>
+            <TableHead className="w-12.5"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {isLoading ? (
-            <>
-              {[...Array(5)].map((_, i) => (
-                <TableRow
-                  key={i}
-                  className="w-full text-center text-gray-600"
-                >
-                  <TableCell><Skeleton className="w-10 h-10" /></TableCell>
-                  <TableCell><Skeleton className="w-60 h-3" /></TableCell>
-                  <TableCell><Skeleton className="w-20 h-3" /></TableCell>
-                  <TableCell><Skeleton className="w-15 h-3" /></TableCell>
-                  <TableCell><Skeleton className="w-15 h-3" /></TableCell>
-                </TableRow>
-              ))
-              }
-            </>
+            [...Array(5)].map((_, i) => (
+              <TableRow key={i}>
+                <TableCell><Skeleton className="w-10 h-10 rounded-md mx-auto" /></TableCell>
+                <TableCell>
+                  <Skeleton className="w-48 h-4 mb-2" />
+                  <Skeleton className="w-24 h-3" />
+                </TableCell>
+                <TableCell><Skeleton className="w-16 h-4 ml-auto" /></TableCell>
+                <TableCell><Skeleton className="w-10 h-4 mx-auto" /></TableCell>
+                <TableCell><Skeleton className="w-24 h-4 ml-auto" /></TableCell>
+                <TableCell><Skeleton className="w-8 h-8 rounded-full" /></TableCell>
+              </TableRow>
+            ))
           ) : (
-            <>
-              {data?.map(product => (
-                <TableRow key={product.id}>
+            data?.map(product => {
+              const stockColor = product.stock <= product.min_stock
+                ? "text-red-500 bg-red-50 dark:bg-red-950/30"
+                : "text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30";
+              return (
+                <TableRow key={product.id} className="group transition-colors">
+                  <TableCell className="text-center">
+                    {product.image ? (
+                      <div
+                        className="cursor-pointer"
+                        onClick={() => onView(product)}
+                      >
+                        <img src={product.image} alt={`imagen del producto ${product.name}`} />
+                      </div>
+                    ) : (
+                      <div
+                        onClick={() => onView(product)}
+                        className="size-10 mx-auto rounded-lg bg-linear-to-br from-muted to-muted/50 flex 
+                    items-center justify-center border border-muted-foreground/10 cursor-pointer"
+                      >
+                        <Image className="size-5 text-muted-foreground opacity-70" />
+                      </div>
+                    )}
+                  </TableCell>
                   <TableCell>
-                    <div
-                      className="p-2 w-fit rounded-sm cursor-pointer bg-accent"
-                      onClick={() => {
-                        setSelectedProduct(product.id);
-                        setOpen(true)
-                      }}
-                    >
-                      <Image className="size-6 text-muted-foreground" />
+                    <div className="flex flex-col">
+                      <span className="font-bold text-foreground/90 leading-none mb-1">
+                        {product.name}
+                      </span>
+                      <span className="text-[10px] font-mono text-muted-foreground tracking-tighter uppercase">
+                        SKU-{product.sku || 'N/A'}
+                      </span>
                     </div>
                   </TableCell>
-                  <TableCell>{product.name}</TableCell>
-                  <TableCell>$ {product.price.toLocaleString()}</TableCell>
-                  <TableCell>{product.stock}</TableCell>
-                  <TableCell className="font-medium">
-                    <div className="flex items-center gap-3 justify-between">
-                      <span>$ {(product.price * product.stock).toLocaleString()} MXN</span>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            size={'icon'}
-                            variant={'ghost'}
-                          >
-                            <MoreHorizontal />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuGroup>
-                            <DropdownMenuLabel className="text-xs">Acciones</DropdownMenuLabel>
-                            <DropdownMenuItem onClick={() => {
-                              setSelectedProduct(product.id)
-                              setOpenEditModal(true);
-                            }}>
-                              <PencilIcon />
-                              Editar
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                              <SlidersHorizontal />
-                              Ajustar
-                            </DropdownMenuItem>
-                          </DropdownMenuGroup>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuGroup>
-                            <DropdownMenuItem variant="destructive">
-                              <TrashIcon />
-                              Eliminar
-                            </DropdownMenuItem>
-                          </DropdownMenuGroup>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
+                  <TableCell className="text-right font-medium text-muted-foreground">
+                    ${product.price.toLocaleString()}
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${stockColor}`}>
+                      {product.stock} <span className="text-[9px] opacity-70">UN</span>
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <span className="font-black text-foreground">
+                      ${(product.price * product.stock).toLocaleString()}
+                    </span>
+                    <span className="text-[9px] ml-1 text-muted-foreground font-normal">MXN</span>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button size="icon" variant="ghost" className="h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <MoreHorizontal className="size-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuGroup>
+                          <DropdownMenuLabel className="text-xs">Acciones</DropdownMenuLabel>
+                          <DropdownMenuItem onClick={() => onEdit(product)}>
+                            <PencilIcon />
+                            Editar
+                          </DropdownMenuItem>
+                          <DropdownMenuItem>
+                            <SlidersHorizontal />
+                            Ajustar
+                          </DropdownMenuItem>
+                        </DropdownMenuGroup>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuGroup onClick={() => onDelete(product)}>
+                          <DropdownMenuItem variant="destructive">
+                            <Trash2Icon />
+                            Eliminar
+                          </DropdownMenuItem>
+                        </DropdownMenuGroup>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </TableCell>
                 </TableRow>
-              ))}
-            </>
+              )
+            })
           )}
         </TableBody>
-        <TableFooter>
-          <TableRow className="font-bold">
-            <TableCell colSpan={4}>Total</TableCell>
-            <TableCell className="text-right">$ {totalInventario.toLocaleString()} MXN</TableCell>
+        <TableFooter className="bg-muted/20">
+          <TableRow>
+            <TableCell colSpan={4} className="text-right font-semibold py-4">Total Inventario</TableCell>
+            <TableCell className="text-right font-black text-lg text-[oklch(0.705_0.213_47.604)] py-4">
+              ${totalInventario.toLocaleString()} <span className="text-[10px] font-normal text-muted-foreground">MXN</span>
+            </TableCell>
+            <TableCell />
           </TableRow>
         </TableFooter>
       </Table>
-      {selectedProduct && (
-        <EditProductModal
-          open={openEditModal}
-          setOpen={handleCloseEdit}
-          productId={selectedProduct}
-        />
-      )}
-      {selectedProduct && (
-        <ViewProductModal
-          open={open}
-          setOpen={handleCloseView}
-          productId={selectedProduct}
-        />
-      )}
     </div >
   );
 }

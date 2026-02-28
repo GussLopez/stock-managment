@@ -1,22 +1,24 @@
 import { File, FileText, Image } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Tabs, TabsContent, TabsContents, TabsList, TabsTrigger } from "../animate-ui/components/animate/tabs";
 import { Product } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { getProductById } from "@/lib/services/productService";
-import { CubeIcon, FileTextIcon, PackageIcon, TagIcon, TextboxIcon, TrendUpIcon } from "@phosphor-icons/react";
+import { CubeIcon, FileTextIcon, PackageIcon, StackIcon, StackMinusIcon, TagIcon, TextboxIcon, TrendUpIcon } from "@phosphor-icons/react";
 import { Badge } from "../ui/badge";
-interface ModalProps {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  productId: string
+interface ProductModalProps {
+  open: boolean
+  onClose: () => void
+  product: Product | null
 }
 
-export default function ViewProductModal({ open, setOpen, productId }: ModalProps) {
-  const { data: product, isLoading, error } = useQuery({
+export default function ViewProductModal({ open, onClose, product }: ProductModalProps) {
+  const productId = product?.id;
+
+  const { data, isLoading, error } = useQuery({
     queryKey: ["product", productId],
-    queryFn: () => getProductById(productId),
-    enabled: Boolean(open && productId),
+    queryFn: () => getProductById(productId!),
+    enabled: open && !!productId,
     staleTime: 0,
   });
 
@@ -25,24 +27,29 @@ export default function ViewProductModal({ open, setOpen, productId }: ModalProp
 
   const lowStock = (product?.stock ?? 0) <= (product?.min_stock ?? 0)
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={(value) => !value && onClose()}>
       <DialogContent className="p-0 gap-0 overflow-hidden">
-        <DialogHeader className="border-b"  >
-          <div className="relative w-full h-48 sm:h-56 flex items-center justify-center group overflow-hidden shrink-0">
-            <div className="flex flex-col justify-center items-center text-gray-300">
-              {product?.image ? (
-                <img src={product.image} alt={`imagen de ${product.name}`} />
-              ) : (
-                <>
-                  <Image className="size-10" />
-                  <span className="text-xs">Sin imagen</span>
-                </>
-              )}
-            </div>
-            <div className="absolute inset-x-0 bottom-0 h-24 bg-linear-to-t from-neutral-100 dark:from-neutral-800 to-transparent pointer-events-none" />
+        <DialogHeader className="border-b">
+          <div className="relative w-full bg-facent h-52 sm:h-60 flex items-center justify-center shrink-0  group">
+            {product?.image ? (
+              <img
+                src={product.image}
+                alt={`imagen de ${product.name}`}
+                className="max-h-[80%] max-w-[80%] object-contain transition-transform duration-300 group-hover:scale-105"
+              />
+            ) : (
+              <div className="flex flex-col items-center gap-2 text-muted-foreground">
+                <Image className="size-10 opacity-60" />
+                <span className="text-xs uppercase tracking-wider font-semibold opacity-60">
+                  Sin imagen
+                </span>
+              </div>
+            )}
 
-            <div className="absolute bottom-3 left-4 right-4 z-10 flex-col gap-1.5">
-              <DialogTitle className="text-xl sm:text-2xl font-bold drop-shadow-lg leading-tight wrap-break-words line-clamp-2">{product?.name}</DialogTitle>
+            <div className="absolute bottom-3 left-4 right-4 z-10">
+              <DialogTitle className="w-fit px-3 py-1 text-xl sm:text-2xl font-bold rounded-md bg-background/70 backdrop-blur-sm">
+                {product?.name}
+              </DialogTitle>
             </div>
           </div>
         </DialogHeader>
@@ -61,9 +68,9 @@ export default function ViewProductModal({ open, setOpen, productId }: ModalProp
                     <FileText size={20} className="text-cyan-500" />
                     <p className="font-semibold text-gray-700 dark:text-neutral-200">Descripción</p>
                   </div>
-                  <div className="w-full h-20 mt-2 px-4 py-2 border rounded-md text-sm text-gray-700 dark:text-neutral-400 line-clamp-2">
+                  <DialogDescription className="w-full h-20 mt-2 px-4 py-2 rounded-md text-sm text-gray-700 dark:text-neutral-400 line-clamp-2 bg-muted/50">
                     {product?.description}
-                  </div>
+                  </DialogDescription>
                 </div>
 
                 <div className="mt-4 font-medium">
@@ -100,16 +107,16 @@ export default function ViewProductModal({ open, setOpen, productId }: ModalProp
             <TabsContent value="precios">
               <div className="p-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-3 rounded-md border">
-                    <p className="text-xs text-muted-foreground">Costo del Producto</p>
-                    <p className="text-xl font-bold mt-1.5">$ {product?.cost} MXN</p>
+                  <div className="p-3 rounded-md bg-muted/50">
+                    <p className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground/70">Costo del Producto</p>
+                    <p className="text-xl font-bold mt-1.5">$ {product?.cost.toLocaleString()} MXN</p>
                   </div>
-                  <div className="p-3 rounded-md border">
-                    <p className="text-xs text-muted-foreground">Precio de Venta</p>
-                    <p className="text-xl font-bold mt-1.5">$ {product?.price} MXN</p>
+                  <div className="p-3 rounded-md text-end bg-muted/50">
+                    <p className="text-[10px] uppercase font-bold tracking-wider text-muted-foreground/70">Precio de Venta</p>
+                    <p className="text-xl font-bold mt-1.5 text-primary-light">$ {product?.price.toLocaleString()} MXN</p>
                   </div>
                 </div>
-                <div className="col-span-2 mt-4 flex justify-between border rounded-lg px-3 py-4">
+                <div className="col-span-2 mt-4 flex justify-between px-3 py-4 rounded-lg bg-muted/50">
                   <div className="flex items-center gap-2 text-sm font-medium">
                     <TrendUpIcon size={20} weight="bold" className={`${isProfit ? 'text-green-600' : 'text-red-600'}`} />
                     Ganancia Estimada (MXN)
@@ -127,15 +134,14 @@ export default function ViewProductModal({ open, setOpen, productId }: ModalProp
             </TabsContent>
             <TabsContent value="inventario">
               <div className="p-4">
-                <div className="grid grid-cols-12 px-2 py-4 border rounded-md">
+                <div className="grid grid-cols-12 px-2 py-4 bg-muted/50  rounded-md">
                   <div className="col-span-5 grid grid-cols-4 gap-10">
-                    <div className="w-11 h-11 p-2 rounded-full bg-primary/20 text-primary">
-                      <PackageIcon size={28} weight="bold" />
+                    <div className="w-11 h-11 p-2 rounded-full bg-primary-light text-white">
+                      <StackIcon size={28} weight="duotone" />
                     </div>
-
                     <div className="col-span-3">
-                      <p className="text-xs font-semibold">STOCK ACTUAL</p>
-                      <p className="text-2xl font-bold">{product?.stock}</p>
+                      <p className="text-xs font-bold tracking-wider uppercase text-muted-foreground/70">Stock Actual</p>
+                      <p className="text-2xl font-bold">{product?.stock} <span className="text-xs font-medium">UN.</span></p>
                     </div>
                   </div>
                   <div className="col-span-2 col-start-11 flex justify-center items-center">
@@ -147,7 +153,7 @@ export default function ViewProductModal({ open, setOpen, productId }: ModalProp
                 <div>
                   <div className="grid grid-cols-12 mt-5 py-3">
                     <div className="flex items-center gap-2 col-span-4 font-medium">
-                      <PackageIcon size={20} />
+                      <StackMinusIcon size={20} />
                       <p>Stock mínimo</p>
                     </div>
 

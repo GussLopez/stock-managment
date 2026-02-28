@@ -41,7 +41,7 @@ export default function AddProduct() {
       await createProduct(formData);
       queryClient.invalidateQueries({ queryKey: ["StockProducts"] });
       setLoading(false);
-      sileo.show({
+      sileo.success({
         title: 'Producto guardado',
         description: 'El producto se creó y se guardó correctamente'
       })

@@ -16,19 +16,20 @@ import ProductStock from "./createProduct/ProductStock";
 import { Button } from "../ui/button";
 import { getProductById, updateProduct } from "@/lib/services/productService";
 import { useEffect, useState } from "react";
-import { ProductForm } from "@/types";
+import { Product, ProductForm } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { sileo } from "sileo";
 import { Spinner } from "../ui/spinner";
 
 interface EditModalProps {
-  open: boolean;
-  setOpen: (open: boolean) => void;
-  productId: string
+  open: boolean
+  onClose: () => void
+  product: Product | null
 }
 
 
-export default function EditProductModal({ open, setOpen, productId }: EditModalProps) {
+export default function EditProductModal({ open, onClose, product }: EditModalProps) {
+  const productId = product?.id
   const queryClient = useQueryClient();
   const [loading, setLoadig] = useState(false);
   const [formData, setFormData] = useState<ProductForm>({
@@ -42,12 +43,7 @@ export default function EditProductModal({ open, setOpen, productId }: EditModal
     model: '',
     image: null
   });
-  const { data: product, error } = useQuery({
-    queryKey: ["product", productId],
-    queryFn: () => getProductById(productId),
-    enabled: open && !!productId,
-  });
-
+ 
   useEffect(() => {
     if (product) {
       setFormData({
@@ -69,17 +65,17 @@ export default function EditProductModal({ open, setOpen, productId }: EditModal
   const mutation = useMutation({
     mutationFn: async () => {
       setLoadig(true);
-      await updateProduct(productId, formData)
+      await updateProduct(productId!, formData)
     },
     onSuccess: () => {
       setLoadig(false);
       queryClient.invalidateQueries({ queryKey: ["StockProducts"] })
-      sileo.show({ 
+      sileo.show({
         title: 'Cambios guardados',
         description: 'Cambios guardados correctamente',
         autopilot: false,
-        fill: "#f3f4f6",
       })
+      onClose();
     },
     onError: (error) => {
       setLoadig(false);
@@ -96,7 +92,7 @@ export default function EditProductModal({ open, setOpen, productId }: EditModal
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={(value) => !value && onClose()}>
       <DialogContent className="max-h-[70vh] overflow-y-scroll scrollbar-hide lg:overflow-y-hidden lg:min-w-200 px-2 lg:p-6">
         <DialogHeader>
           <DialogTitle>Editar producto</DialogTitle>
@@ -112,7 +108,6 @@ export default function EditProductModal({ open, setOpen, productId }: EditModal
           </TabsList>
           <TabsContents>
             <TabsContent value="general">
-              {error && <p className="p-4 font-medium text-red-400">Error al obtener los datos</p>}
               <ProductGeneral formData={formData} onChange={updateForm} />
             </TabsContent>
             <TabsContent value="detalles">
