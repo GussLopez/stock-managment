@@ -36,7 +36,7 @@ export default function InventarioPage() {
     localStorage.setItem("inventory-view", value)
   }
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error } = useQuery<Product[]>({
     queryKey: ["StockProducts"],
     queryFn: async () => {
       const data = await getProducts();
