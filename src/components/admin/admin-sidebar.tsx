@@ -3,10 +3,12 @@ import * as React from "react"
 import {
   BookOpen,
   ChevronsUpDown,
+  DollarSign,
   FolderKanban,
   Frame,
   GalleryVerticalEnd,
   Grid2x2Check,
+  LayoutTemplate,
   Map,
   Package,
   PieChart,
@@ -39,8 +41,18 @@ const data = {
   },
   navMain: [
     {
+      title: "Inicio",
+      url: "/admin",
+      icon: LayoutTemplate,
+    },
+    {
+      title: "Ventas",
+      url: "/admin/ventas",
+      icon: DollarSign,
+    },
+    {
       title: "Kardex",
-      url: "#",
+      url: "/admin/kardex",
       icon: Grid2x2Check,
       items: [
         {
