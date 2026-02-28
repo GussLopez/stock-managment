@@ -1,6 +1,5 @@
 'use client'
 
-import { User } from "@supabase/supabase-js"
 import { Input } from "../ui/input"
 import { useState } from "react"
 import { getSupabaseBrowserClient } from "@/lib/supabase/browser-client"
@@ -16,15 +15,12 @@ import ErrorMessage from "../ui/error-message"
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert"
 import { EyeIcon, EyeOffIcon } from "lucide-react"
 
-interface LoginDemoProps {
-  user: User | null
-}
 interface LoginForm {
   email: string;
   password: string;
 }
 
-export default function Login({ user }: LoginDemoProps) {
+export default function Login() {
   const [loading, setLoading] = useState(false);
   const supabase = getSupabaseBrowserClient();
   const [authError, setAuthError] = useState<string | null>(null);
