@@ -1,16 +1,28 @@
 'use client'
-import { Tabs, TabsContent, TabsContents, TabsList, TabsTrigger } from "@/components/animate-ui/components/animate/tabs";
+import { Tabs, TabsList, TabsTrigger } from "@/components/animate-ui/components/animate/tabs";
 import AddProduct from "@/components/products/AddProduct";
 import ProductTable from "@/components/products/ProductTable";
 import { ListDashesIcon, SquaresFourIcon } from "@phosphor-icons/react";
-import { Box } from "lucide-react";
+import { Box, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getProducts } from "@/lib/services/productService";
 import { useQuery } from "@tanstack/react-query";
 import CardView from "@/components/products/CardView";
+import { Input } from "@/components/ui/input";
+import { Spinner } from "@/components/ui/spinner";
+import { Product } from "@/types";
+import EditProductModal from "@/components/products/EditProductModal";
+import ViewProductModal from "@/components/products/ViewPrductModal";
+import { DeleteProduct } from "@/components/products/DeleteProduct";
 
 export default function InventarioPage() {
   const [view, setView] = useState("table")
+  type ModalState =
+    | { type: "edit"; product: Product }
+    | { type: "view"; product: Product }
+    | { type: "delete"; product: Product }
+    | null
+  const [modal, setModal] = useState<ModalState>(null)
 
   useEffect(() => {
     const savedView = localStorage.getItem("inventory-view")
@@ -37,6 +49,16 @@ export default function InventarioPage() {
   const totalInventario = data?.reduce((acc, product) => {
     return acc + (product.price * product.stock);
   }, 0) || 0;
+
+  const openEdit = (product: Product) =>
+    setModal({ type: "edit", product })
+
+  const openView = (product: Product) =>
+    setModal({ type: "view", product })
+
+  const openDelete = (product: Product) =>
+    setModal({ type: "delete", product })
+
   return (
     <div>
       <div className="flex justify-between">
@@ -57,14 +79,65 @@ export default function InventarioPage() {
               </TabsTrigger>
             </TabsList>
           </Tabs>
-
           <AddProduct />
         </div>
       </div>
-      <div className="mt-6">
-        {data && view === "table" && <ProductTable data={data} isLoading={isLoading} totalInventario={totalInventario} />}
-        {data && view === "card" && <CardView data={data} isLoading={isLoading} totalInventario={totalInventario} />}
+      <div className="mt-4">
+        <div className="relative">
+          <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Buscar producto, SKU..."
+            className="max-w-80 pl-9"
+          />
+        </div>
       </div>
-    </div>
+      <div className="mt-6">
+        {isLoading ? (
+          <div className="flex justify-center items-center h-90">
+            <Spinner className="size-8" />
+          </div>
+        ) : (
+          <>
+            {data && view === "table" &&
+              <ProductTable
+                data={data}
+                totalInventario={totalInventario}
+                onEdit={openEdit}
+                onDelete={openDelete}
+                onView={openView}
+              />}
+            {data && view === "card" &&
+              <CardView
+                data={data}
+                totalInventario={totalInventario}
+                onEdit={openEdit}
+                onDelete={openDelete}
+                onView={openView}
+              />}
+          </>
+        )}
+      </div>
+      {modal?.type === "edit" && (
+        <EditProductModal
+          open
+          product={modal.product}
+          onClose={() => setModal(null)}
+        />
+      )}
+      {modal?.type === "view" && (
+        <ViewProductModal
+          open
+          product={modal.product}
+          onClose={() => setModal(null)}
+        />
+      )}
+      {modal?.type === "delete" && (
+        <DeleteProduct
+          open
+          productId={modal.product.id}
+          onClose={() => setModal(null)}
+        />
+      )}
+    </div >
   )
 }
