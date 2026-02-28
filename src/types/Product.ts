@@ -2,13 +2,13 @@ export interface Product {
   id: string;
   business_id: string;
   name: string;
-  description: string;
+  description: string | null;
   price: number;
   cost: number;
   stock: number;
   min_stock: number;
   sku: string;
-  model: string;
+  model: string | null;
   image: string | null;
 }
 

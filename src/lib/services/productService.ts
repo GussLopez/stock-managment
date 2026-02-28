@@ -5,7 +5,7 @@ const supabase = getSupabaseBrowserClient();
 export async function getProducts() {
   const { data, error } = await supabase
     .from("products")
-    .select("id, name, price, stock, sku, cost, image")
+    .select("*")
     .order("created_at", { ascending: false });
 
     if (error) throw error
@@ -52,4 +52,16 @@ export async function deleteProduct(id: string) {
     .eq("id", id);
 
   if (error) throw error;
+}
+
+export async function searchProducts(query: string) {
+  const { data, error } = await supabase
+    .from("products")
+    .select("*")
+    .ilike("name", `%${query}%`)
+    .order("created_at", { ascending: false });
+
+  if (error) throw error;
+
+  return data;
 }
