@@ -34,7 +34,17 @@ export default function RootLayout({
           <Providers>
             {children}
           </Providers>
-          <Toaster position="bottom-right" />
+          <Toaster
+            position="bottom-right"
+            theme="dark"
+            options={{
+              fill: "#171717",
+              roundness: 16,
+              styles: {
+                description: "text-neutral-100!",
+              },
+            }}
+          />
         </ThemeProvider>
       </body>
     </html>
