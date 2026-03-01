@@ -13,3 +13,8 @@ export interface Product {
 }
 
 export type ProductForm = Omit<Product, 'id' | 'business_id'>
+
+
+export interface ProductItem extends Product {
+  quantity?: number
+}
