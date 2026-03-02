@@ -1,17 +1,28 @@
+import { useCartStore } from "@/store/useCartStore";
 import { getSupabaseBrowserClient } from "../supabase/browser-client";
 
 const supabase = getSupabaseBrowserClient();
 
-export async function createSale() {
+export async function createSaleFromCart(paymentMethod: "cash" | "card" | "transfer") {
+  const items = useCartStore.getState().items;
+
+  if (items.length === 0) {
+    throw new Error("El carrito esta vacío");
+  }
+
+  const formattedItems = items.map((item) => ({
+    product_id: item.id,
+    quantity: item.quantity,
+  }));
+
   const { data, error } = await supabase.rpc("create_sale", {
-    p_payment_method: "cash",
-    p_items: [
-      { product_id: "uuid-producto-1", quantity: 2 },
-      { product_id: "uuid-producto-2", quantity: 1 },
-    ],
+    p_payment_method: paymentMethod,
+    p_items: formattedItems,
   });
 
   if (error) throw error;
+
+  useCartStore.getState().clearCart();
 
   return data;
 }
