@@ -1,50 +1,139 @@
 'use client';
-import { DollarSign, ScanBarcode, ShoppingCart } from 'lucide-react'
-import ComboboxSearchProduct from '@/components/shadcn-studio/combobox/combobox-01'
+import { DollarSign, Plus, ScanBarcode, ShoppingCart } from 'lucide-react'
+import ComboboxSearchProduct from '@/components/sales/SearchProductInput'
 import { Input } from '@/components/ui/input';
+import InputStock from '@/components/sales/ProductQuantity';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { CheckCircleIcon, SealPercentIcon } from '@phosphor-icons/react';
+import { useCartStore } from '@/store/useCartStore';
+import { useState } from 'react';
+import { ProductItem } from '@/types';
+import { sileo } from 'sileo';
+import ShoppingCartItems from '@/components/sales/ShoppingCart';
+import { createSaleFromCart } from '@/lib/services/salesService';
+
 
 export default function VentasPage() {
+  const [product, setProduct] = useState<ProductItem | null>(null);
+  const addToCart = useCartStore(state => state.addToCart);
+  const getTotal = useCartStore(state => state.getTotal);
+  const items = useCartStore(state => state.items);
+  const precioTotal = getTotal().toLocaleString('mx', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const handleAddProduct = () => {
+    if (!product) {
+      sileo.warning({
+        title: 'Selecciona un producto',
+        description: 'Seleeciona un producto para añadirlo al carrito y registrar la compra',
+        autopilot: false
+      })
+      return;
+    }
+    addToCart(product);
+    setProduct(null);
+  }
 
+  const handleCheckOut = async () => {
+    try {
+      await createSaleFromCart("cash");
+
+      sileo.success({
+        title: "Venta registrada",
+        description: "La venta se registró correctamente",
+        autopilot: true
+      });
+    } catch (error) {
+      console.log(error);
+      sileo.error({
+        title: "Error al registrar venta",
+        description: 'Ocurrió un error al registrar la venta, intente más tarde',
+        autopilot: false
+      });
+    }
+  }
   return (
     <div>
       <div className="flex items-center gap-3">
-        <ShoppingCart size={30} className='text-green-600' />
+        <SealPercentIcon size={30} className='text-green-600' />
         <h1 className="text-3xl font-semibold">Ventas</h1>
       </div>
 
       <div className='grid grid-cols-3 gap-10 mt-10'>
-
-        <div className='col-span-2 p-4 rounded-md border'>
+        <div className='col-span-2 p-4 rounded-md border border-accent'>
           <div className='flex items-center gap-3'>
             <ScanBarcode />
             <h2 className='font-semibold text-lg'>Agregar Items</h2>
           </div>
-          <div className='grid grid-cols-8 mt-4 text-xs font-medium text-muted-foreground'>
-            <div className='col-span-4'>
-              <p>Buscar producto</p>
-              <ComboboxSearchProduct />
+          <div className='flex gap-5 mt-4 text-xs font-medium text-muted-foreground'>
+            <div className='w-full max-w-80'>
+              <label htmlFor='searhProduct'>Buscar producto</label>
+              <ComboboxSearchProduct setProduct={setProduct} />
             </div>
-            <div className='col-span-2'>
-              <p>Precio de venta</p>
+            <div className='w-full max-w-60'>
+              <label>Precio de venta</label>
               <div className='relative'>
                 <Input
                   className='pl-9'
                   type='number'
+                  value={product?.price || 0}
+                  disabled={!product}
+                  onChange={(e) => {
+                    const value = Number(e.target.value);
+
+                    setProduct(prev => {
+                      if (!prev) return prev;
+
+                      return {
+                        ...prev,
+                        price: value
+                      }
+                    })
+                  }}
                 />
                 <DollarSign className='absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground' />
               </div>
             </div>
 
             <div className='col-span-2'>
-              <p>Cant.</p>
-              <Input
-
+              <label>Cant.</label>
+              <InputStock
+                quantity={product?.quantity ?? 1}
+                stock={product?.stock ?? 0}
+                setProduct={setProduct}
+                disabled={!product}
               />
             </div>
           </div>
+          <Button
+            className='w-full mt-5 bg-primary-light'
+            onClick={handleAddProduct}
+          >
+            <Plus />
+            Agregar Item
+          </Button>
         </div>
 
+        <div className='border border-accent rounded-md'>
+          <div className='flex items-center justify-between p-4 border-b border-accent'>
+            <h2 className='text-3xl font-semibold'>Total a pagar</h2>
+            <Badge variant={'outline'} className='border-emerald-500 text-emerald-500'>MXN</Badge>
+          </div>
+          <div className='py-4 text-center'>
+            <p className='text-4xl font-extrabold text-transparent bg-clip-text bg-linear-to-r from-green-400 to-cyan-600'>{precioTotal} MXN</p>
+          </div>
 
+          <div className='p-4'>
+            <Button
+              className="w-full h-12 text-xl font-black gap-2 transition-all bg-[#29c24a] hover:bg-[#00ac33] text-white active:scale-[0.98]"
+              disabled={items.length <= 0}
+              onClick={handleCheckOut}
+            >
+              <CheckCircleIcon weight="bold" className='size-8' />
+              PAGAR AHORA
+            </Button>
+          </div>
+        </div>
+        <ShoppingCartItems />
       </div>
     </div>
   )
