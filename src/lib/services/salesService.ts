@@ -3,7 +3,9 @@ import { getSupabaseBrowserClient } from "../supabase/browser-client";
 
 const supabase = getSupabaseBrowserClient();
 
-export async function createSaleFromCart(paymentMethod: "cash" | "card" | "transfer") {
+export async function createSaleFromCart(
+  paymentMethod: "cash" | "card" | "transfer",
+) {
   const items = useCartStore.getState().items;
 
   if (items.length === 0) {
@@ -23,6 +25,34 @@ export async function createSaleFromCart(paymentMethod: "cash" | "card" | "trans
   if (error) throw error;
 
   useCartStore.getState().clearCart();
+
+  return data;
+}
+
+export async function getSales() {
+  const { data, error } = await supabase
+    .from("sales")
+    .select(
+      `
+      *,
+      sale_items (
+        id,
+        quantity,
+        price,
+        product_id,
+        products (
+          id,
+          name,
+          sku,
+          cost
+        )
+      )
+    `,
+    )
+    .order("created_at", { ascending: false })
+    .limit(10);
+
+  if (error) throw error;
 
   return data;
 }
