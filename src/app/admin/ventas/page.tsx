@@ -1,5 +1,5 @@
-'use client';
-import { DollarSign, Plus, ScanBarcode, ShoppingCart } from 'lucide-react'
+'use client';;
+import { DollarSign, Plus, ScanBarcode } from 'lucide-react';
 import ComboboxSearchProduct from '@/components/sales/SearchProductInput'
 import { Input } from '@/components/ui/input';
 import InputStock from '@/components/sales/ProductQuantity';
@@ -11,14 +11,21 @@ import { useState } from 'react';
 import { ProductItem } from '@/types';
 import { sileo } from 'sileo';
 import ShoppingCartItems from '@/components/sales/ShoppingCart';
-import { createSaleFromCart } from '@/lib/services/salesService';
+import { createSaleFromCart, getSaleById } from '@/lib/services/salesService';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { Spinner } from '@/components/ui/spinner';
+import NewSaleReceipt from '@/components/sales/NewSaleReceipt';
 
 export default function VentasPage() {
   const [product, setProduct] = useState<ProductItem | null>(null);
   const addToCart = useCartStore(state => state.addToCart);
   const getTotal = useCartStore(state => state.getTotal);
   const items = useCartStore(state => state.items);
-  const precioTotal = getTotal().toLocaleString('mx', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const [saleId, setSaleId] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const queryClient = useQueryClient();
+  const precioTotal = getTotal().toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const handleAddProduct = () => {
     if (!product) {
       sileo.warning({
@@ -34,14 +41,19 @@ export default function VentasPage() {
 
   const handleCheckOut = async () => {
     try {
-      await createSaleFromCart("cash");
-
+      setLoading(true);
+      const newSaleId = await createSaleFromCart("cash");
+      setSaleId(newSaleId);
+      setOpen(true);
       sileo.success({
         title: "Venta registrada",
         description: "La venta se registró correctamente",
         autopilot: true
       });
+      queryClient.invalidateQueries({ queryKey: ["stock-products", "sales-reports"] })
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.log(error);
       sileo.error({
         title: "Error al registrar venta",
@@ -50,6 +62,17 @@ export default function VentasPage() {
       });
     }
   }
+
+  const { data: receipt } = useQuery({
+    queryKey: ["sale-recipe", saleId],
+    queryFn: () => {
+      if (!saleId) throw new Error("No saleId");
+      return getSaleById(saleId);
+    },
+    retry: 1,
+    refetchOnWindowFocus: false,
+    enabled: !!saleId
+  })
   return (
     <div>
       <div className="flex items-center gap-3">
@@ -124,17 +147,33 @@ export default function VentasPage() {
           <div className='p-4'>
             <Button
               className="w-full h-12 text-xl font-black gap-2 transition-all bg-[#29c24a] hover:bg-[#00ac33] text-white active:scale-[0.98]"
-              disabled={items.length <= 0}
+              disabled={items.length <= 0 || loading}
               onClick={handleCheckOut}
             >
-              <CheckCircleIcon weight="bold" className='size-8' />
-              PAGAR AHORA
+              {loading ? (
+                <>
+                  <Spinner />
+                  Pagando
+                </>
+              ) : (
+                <>
+                  <CheckCircleIcon weight="bold" className='size-8' />
+                  PAGAR AHORA
+                </>
+              )}
             </Button>
           </div>
         </div>
         <ShoppingCartItems />
       </div>
-    </div>
+      {receipt && (
+        <NewSaleReceipt
+          sale={receipt}
+          open={open}
+          setOpen={setOpen}
+        />
+      )}
+    </div >
   )
 }
 
