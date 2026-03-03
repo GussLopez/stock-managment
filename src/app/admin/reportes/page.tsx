@@ -1,17 +1,31 @@
-'use client'
-
+'use client';
+import SaleReceipt from "@/components/sales/SaleReceipt";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { RangeDatePicker } from "@/components/ui/range-date";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import { getSales } from "@/lib/services/salesService";
 import { Sale } from "@/types";
-import { BriefcaseIcon, CalendarBlankIcon, NotePencilIcon, PackageIcon, ReceiptIcon, TicketIcon, TrashIcon, TrendUpIcon, UserCircleIcon } from "@phosphor-icons/react";
+import {
+  BriefcaseIcon,
+  CalendarBlankIcon,
+  DownloadSimpleIcon,
+  FileTextIcon,
+  NotePencilIcon,
+  PackageIcon,
+  ReceiptIcon,
+  TrashIcon,
+  TrendUpIcon,
+  UserCircleIcon,
+} from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
 import { Ban, FileClock } from "lucide-react";
+import { useState } from "react";
 
 export default function ReportesPage() {
-
+  const [open, setOpen] = useState(false);
+  const [selectedSale, setSelectedSale] = useState<Sale | null>(null)
   const { data, isLoading } = useQuery({
     queryKey: ["sales-reports"],
     queryFn: async () => {
@@ -20,15 +34,27 @@ export default function ReportesPage() {
     },
     retry: 1,
   })
-
-  console.log(data);
+  console.log(selectedSale);
   return (
     <div>
       <div className="flex items-center gap-3">
         <FileClock size={30} className='text-primary-light' />
         <h1 className="text-3xl font-semibold">Historial de Ventas</h1>
       </div>
+      <div className="flex justify-between items-center mt-6">
+        <RangeDatePicker />
 
+        <div className="flex gap-2">
+          <Button variant={'outline'}>
+            <FileTextIcon size={20} weight="bold" />
+            PDF Lista
+          </Button>
+          <Button variant={'outline'}>
+            <DownloadSimpleIcon size={20} weight="bold" />
+            PDF Lista
+          </Button>
+        </div>
+      </div>
       <div className="mt-5">
         {isLoading && <div className="flex justify-center items-center py-10">
           <Spinner className="size-6" />
@@ -160,7 +186,10 @@ export default function ReportesPage() {
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-3 mt-4">
-                    <Button variant={"outline"}>
+                    <Button variant={"outline"} onClick={() => {
+                      setSelectedSale(sale);
+                      setOpen(true);
+                    }}>
                       <ReceiptIcon size={20} />
                       Recibo
                     </Button>
@@ -190,6 +219,13 @@ export default function ReportesPage() {
           })}
         </div>
       </div>
+      {selectedSale && open && (
+        <SaleReceipt
+          sale={selectedSale}
+          open={open}
+          setOpen={setOpen}
+        />
+      )}
     </div>
   )
 }
