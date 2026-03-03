@@ -13,7 +13,6 @@ import { sileo } from 'sileo';
 import ShoppingCartItems from '@/components/sales/ShoppingCart';
 import { createSaleFromCart } from '@/lib/services/salesService';
 
-
 export default function VentasPage() {
   const [product, setProduct] = useState<ProductItem | null>(null);
   const addToCart = useCartStore(state => state.addToCart);
