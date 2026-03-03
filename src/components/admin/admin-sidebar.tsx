@@ -71,7 +71,7 @@ const data = {
     },
     {
       title: "Reportes",
-      url: "#",
+      url: "/admin/reportes",
       icon: FolderKanban,
       items: [
         {
