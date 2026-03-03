@@ -56,3 +56,15 @@ export async function getSales() {
 
   return data;
 }
+
+export async function getSaleById(saleId: string) {
+  const { data, error } = await supabase
+    .from("sales")
+    .select("*")
+    .eq("id", saleId)
+    .single();
+
+  if (error) throw error;
+
+  return data;
+}
