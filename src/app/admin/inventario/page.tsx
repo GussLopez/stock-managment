@@ -37,7 +37,7 @@ export default function InventarioPage() {
   }
 
   const { data, isLoading, error } = useQuery<Product[]>({
-    queryKey: ["StockProducts"],
+    queryKey: ["stock-products"],
     queryFn: async () => {
       const data = await getProducts();
       return data;
