@@ -15,7 +15,7 @@ export default function ShoppingCartItems() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const removeFromCart = useCartStore(state => state.removeFromCart)
   return (
-    <div className="col-span-2 p-4 border border-muted rounded-lg">
+    <div className="col-span-2 p-4 border border-input rounded-lg">
       <div className="flex items-center gap-3">
         <ShoppingCartIcon size={24} />
         <h2 className="font-semibold text-lg">Carrito de compras</h2>
@@ -48,7 +48,7 @@ export default function ShoppingCartItems() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className='flex flex-col items-center mt-3 py-12 border-2 border-dashed border-muted rounded-lg text-muted-foreground'
+              className='flex flex-col items-center mt-3 py-12 border-2 border-dashed border-input rounded-lg text-muted-foreground'
             >
               <ShoppingCartIcon size={40} />
               <p className="font-medium">El carrito está vacío</p>

@@ -178,7 +178,7 @@ export default function ReportesPage() {
 
                     <Button
                       variant={'ghost'}
-                      className="bg-red-500/80 hover:bg-red-500 hover:text-white text-white dark:hover:bg-red-500"
+                      className="bg-red-500 hover:bg-red-600 hover:text-white text-white dark:hover:bg-red-600/90"
                     >
                       <TrashIcon size={20} />
                       Eliminar

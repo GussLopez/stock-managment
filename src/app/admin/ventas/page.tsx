@@ -58,7 +58,7 @@ export default function VentasPage() {
       </div>
 
       <div className='grid grid-cols-3 gap-10 mt-10'>
-        <div className='col-span-2 p-4 rounded-md border border-accent'>
+        <div className='col-span-2 p-4 rounded-lg border border-input'>
           <div className='flex items-center gap-3'>
             <ScanBarcode />
             <h2 className='font-semibold text-lg'>Agregar Items</h2>
@@ -112,8 +112,8 @@ export default function VentasPage() {
           </Button>
         </div>
 
-        <div className='border border-accent rounded-md'>
-          <div className='flex items-center justify-between p-4 border-b border-accent'>
+        <div className='border border-input rounded-lg'>
+          <div className='flex items-center justify-between p-4 border-b border-input'>
             <h2 className='text-3xl font-semibold'>Total a pagar</h2>
             <Badge variant={'outline'} className='border-emerald-500 text-emerald-500'>MXN</Badge>
           </div>
