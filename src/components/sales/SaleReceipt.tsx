@@ -1,10 +1,11 @@
 import { Sale } from "@/types";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
-import { CreditCardIcon, StorefrontIcon, UserIcon } from "@phosphor-icons/react";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
+import { DownloadSimpleIcon, StorefrontIcon, UserIcon } from "@phosphor-icons/react";
 import { Badge } from "../ui/badge";
 import { CreditCard } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { Separator } from "../ui/separator";
+import { Button } from "../ui/button";
 
 interface SaleReceiptProps {
   sale: Sale;
@@ -27,11 +28,11 @@ export default function SaleReceipt({ sale, open, setOpen }: SaleReceiptProps) {
     })
 
   const totalCost = sale.sale_items.reduce((total, item) => {
-    return total + item.products.cost
+    return total + (item.products.cost * item.quantity)
   }, 0)
 
   const totalRevenue = sale.sale_items.reduce((total, item) => {
-    return total + (item.price - item.products.cost)
+    return total + ((item.price - item.products.cost) * item.quantity)
   }, 0)
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -89,7 +90,7 @@ export default function SaleReceipt({ sale, open, setOpen }: SaleReceiptProps) {
             </div>
           </div>
 
-          <div className="mt-6 rounded-md overflow-hidden border border-input ">
+          <div className="mt-4 rounded-md overflow-hidden border border-input ">
             <Table>
               <TableHeader>
                 <TableRow className="bg-facent">
@@ -151,6 +152,15 @@ export default function SaleReceipt({ sale, open, setOpen }: SaleReceiptProps) {
             </div>
           </div>
         </div>
+        <DialogFooter className="justify-between!">
+          <DialogClose asChild>
+            <Button variant={'outline'}>Cerrar</Button>
+          </DialogClose>
+          <Button>
+            <DownloadSimpleIcon size={20} weight="bold" />
+            Descargar PDF
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   )

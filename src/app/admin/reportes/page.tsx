@@ -70,11 +70,11 @@ export default function ReportesPage() {
                 year: "numeric"
               })
             const totalCost = sale.sale_items.reduce((total, item) => {
-              return total + item.products.cost
+              return total + (item.products.cost * item.quantity)
             }, 0)
 
             const totalRevenue = sale.sale_items.reduce((total, item) => {
-              return total + (item.price - item.products.cost)
+              return total + ((item.price - item.products.cost) * item.quantity)
             }, 0)
             return (
               <div
