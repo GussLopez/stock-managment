@@ -1,11 +1,12 @@
 "use client";;
 import * as React from "react"
 import {
+  ArrowRightLeft,
   BookOpen,
+  ChartNoAxesCombined,
   ChevronsUpDown,
   DollarSign,
-  FolderKanban,
-  Frame,
+  FileClock,
   GalleryVerticalEnd,
   Grid2x2Check,
   LayoutTemplate,
@@ -13,6 +14,7 @@ import {
   Package,
   PieChart,
   Settings2,
+  Users,
 } from "lucide-react";
 
 import { NavMain } from "@/components/admin/nav-main"
@@ -27,6 +29,7 @@ import {
   SidebarMenuButton,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { NavSettings } from "./nav-settings";
 
 const data = {
   user: {
@@ -51,28 +54,9 @@ const data = {
       icon: DollarSign,
     },
     {
-      title: "Kardex",
-      url: "/admin/kardex",
-      icon: Grid2x2Check,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Reportes",
-      url: "/admin/reportes",
-      icon: FolderKanban,
+      title: "Historial",
+      url: "/admin/historial",
+      icon: FileClock ,
       items: [
         {
           title: "History",
@@ -89,9 +73,9 @@ const data = {
       ],
     },
     {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
+      title: "Reportes",
+      url: "/admin/reportes",
+      icon: ChartNoAxesCombined,
       items: [
         {
           title: "Introduction",
@@ -112,9 +96,9 @@ const data = {
       ],
     },
     {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
+      title: "Operaciones",
+      url: "/admin/operaciones",
+      icon: BookOpen,
       items: [
         {
           title: "General",
@@ -142,14 +126,26 @@ const data = {
       icon: Package,
     },
     {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
+      name: "Entradas y Salidas",
+      url: "/admin/entradas-salidas",
+      icon: ArrowRightLeft,
     },
     {
       name: "Travel",
       url: "#",
       icon: Map,
+    },
+  ],
+  settings: [
+    {
+      name: "Usuarios",
+      url: "/admin/usuarios",
+      icon: Users,
+    },
+    {
+      name: "Ajustes",
+      url: "/admin/ajustes",
+      icon: Settings2,
     },
   ],
 }
@@ -177,6 +173,7 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
       <SidebarContent>
         <NavMain items={data.navMain} />
         <NavProjects projects={data.projects} />
+        <NavSettings settings={data.settings} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

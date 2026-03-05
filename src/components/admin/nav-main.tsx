@@ -1,7 +1,7 @@
 "use client";
 import { type LucideIcon } from "lucide-react";
 
-import { SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton } from "@/components/ui/sidebar";
+import { SidebarGroup, SidebarMenu, SidebarMenuButton } from "@/components/ui/sidebar";
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
@@ -23,10 +23,9 @@ export function NavMain({
   const activeClasses = 'text-primary bg-primary/10 hover:bg-primary/10! hover:text-primary!'
   return (
     <SidebarGroup>
-      <SidebarGroupLabel>Inventario</SidebarGroupLabel>
       <SidebarMenu>
         {items.map((item, i) => (
-          <SidebarMenuButton key={i} asChild tooltip={'Home'}>
+          <SidebarMenuButton key={i} asChild tooltip={item.title}>
             <Link href={item.url} className={`${path === item.url && activeClasses}`} >
               <item.icon />
               <span>{item.title}</span>

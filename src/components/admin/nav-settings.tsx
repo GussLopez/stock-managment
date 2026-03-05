@@ -26,10 +26,10 @@ import {
 } from "@/components/ui/sidebar"
 import Link from "next/link"
 
-export function NavProjects({
-  projects,
+export function NavSettings({
+  settings,
 }: {
-  projects: {
+  settings: {
     name: string
     url: string
     icon: LucideIcon
@@ -38,12 +38,12 @@ export function NavProjects({
   const { isMobile } = useSidebar()
 
   return (
-    <SidebarGroup >
-      <SidebarGroupLabel>Gestión</SidebarGroupLabel>
+    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+      <SidebarGroupLabel>Administración</SidebarGroupLabel>
       <SidebarMenu>
-        {projects.map((item) => (
+        {settings.map((item) => (
           <SidebarMenuItem key={item.name}>
-            <SidebarMenuButton asChild tooltip={item.name}>
+            <SidebarMenuButton asChild>
               <Link href={item.url}>
                 <item.icon />
                 <span>{item.name}</span>
