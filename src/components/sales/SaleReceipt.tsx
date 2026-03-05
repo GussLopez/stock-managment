@@ -6,14 +6,27 @@ import { CreditCard } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
+import { generateReceiptPDF } from "@/lib/generateReceiptPDF";
+import { useState } from "react";
 
 interface SaleReceiptProps {
-  sale: Sale;
   open: boolean;
-  setOpen: (open: boolean) => void;
+  sale: Sale;
+  onClose: () => void;
 }
 
-export default function SaleReceipt({ sale, open, setOpen }: SaleReceiptProps) {
+export default function SaleReceipt({ open, sale, onClose }: SaleReceiptProps) {
+  const [downloading, setDownloading] = useState(false);
+
+  const handleDownloadPDF = async () => {
+    setDownloading(true);
+    try {
+      await generateReceiptPDF(sale);
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   const formatDate = new Date(sale.created_at!)
     .toLocaleDateString("es-MX", {
       day: "2-digit",
@@ -35,7 +48,7 @@ export default function SaleReceipt({ sale, open, setOpen }: SaleReceiptProps) {
     return total + ((item.price - item.products.cost) * item.quantity)
   }, 0)
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={(value) => !value && onClose()}>
       <DialogContent className="min-w-2xl">
         <DialogHeader className="pt-1 flex-row items-center justify-between">
           <div className="flex items-center gap-3">
@@ -156,9 +169,9 @@ export default function SaleReceipt({ sale, open, setOpen }: SaleReceiptProps) {
           <DialogClose asChild>
             <Button variant={'outline'}>Cerrar</Button>
           </DialogClose>
-          <Button>
+          <Button onClick={handleDownloadPDF} disabled={downloading}>
             <DownloadSimpleIcon size={20} weight="bold" />
-            Descargar PDF
+            {downloading ? "Generando..." : "Descargar PDF"}
           </Button>
         </DialogFooter>
       </DialogContent>

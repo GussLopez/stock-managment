@@ -1,0 +1,89 @@
+'use client'
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogMedia,
+  AlertDialogTitle,
+} from "../ui/alert-dialog";
+import { Button } from "../ui/button";
+import { Trash2Icon } from "lucide-react";
+import { DeleteSaleById } from "@/lib/services/salesService";
+import { sileo } from "sileo";
+import { Spinner } from "../ui/spinner";
+
+interface DeleteSaleDialogProps {
+  open: boolean;
+  onClose: () => void;
+  saleId: string;
+}
+
+export default function DeleteSaleDialog({ open, onClose, saleId }: DeleteSaleDialogProps) {
+  const queryClient = useQueryClient();
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: async () => {
+      await DeleteSaleById(saleId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["sales-reports"] });
+      sileo.success({
+        title: 'Venta eliminado',
+        description: 'La venta se elimino correctamente',
+        autopilot: false
+      })
+    },
+    onError: (error) => {
+      sileo.error({
+        title: "Algo salió mal",
+        description: "Por favor intente más tarde.",
+
+      });
+      console.error(error)
+    },
+  })
+  return (
+    <AlertDialog open={open} onOpenChange={(value) => !value && onClose()}>
+      <AlertDialogContent size="sm">
+        <AlertDialogHeader>
+          <AlertDialogMedia className="rounded-xl bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive">
+            <Trash2Icon />
+          </AlertDialogMedia>
+          <AlertDialogTitle>¿Eliminar venta?</AlertDialogTitle>
+          <AlertDialogDescription>
+            Esta acción eliminará el producto permanentemente y no se podrá recuperar.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter className="mt-3">
+          <AlertDialogCancel asChild>
+            <Button variant={'outline'}>Cancelar</Button>
+          </AlertDialogCancel>
+          <AlertDialogAction
+            variant="destructive"
+            disabled={isPending}
+            onClick={(e) => {
+              e.preventDefault();
+              mutate(undefined, {
+                onSuccess: () => {
+                  onClose();
+                }
+              })
+            }}
+          >
+            {isPending ? (
+              <>
+                <Spinner />
+                Eliminando
+              </>
+            ) : 'Eliminar'}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  )
+}

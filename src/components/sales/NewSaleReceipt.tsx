@@ -3,6 +3,8 @@ import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle } from ".
 import { Sale } from "@/types";
 import { Separator } from "../ui/separator";
 import { Button } from "../ui/button";
+import { useRef, useState } from "react";
+import { generateReceiptPDF } from "@/lib/generateReceiptPDF";
 
 interface SaleRecipProps {
   open: boolean;
@@ -11,15 +13,38 @@ interface SaleRecipProps {
 }
 
 export default function NewSaleReceipt({ open, setOpen, sale }: SaleRecipProps) {
+  const [downloading, setDownloading] = useState(false);
+  const printRef = useRef<HTMLDivElement>(null);
   const formatDate = new Date(sale.created_at!)
     .toLocaleDateString("es-MX", {
       day: "2-digit",
       month: "2-digit",
       year: "numeric"
     })
+
+  const handleDownloadPDF = async () => {
+    setDownloading(true);
+    try {
+      await generateReceiptPDF(sale);
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  const handlePrint = () => {
+    const printContents = printRef.current?.innerHTML;
+    const originalContents = document.body.innerHTML;
+
+    if (printContents) {
+      document.body.innerHTML = printContents;
+      window.print();
+      document.body.innerHTML = originalContents;
+      window.location.reload();
+    }
+  }
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent>
+      <DialogContent ref={printRef}>
         <DialogHeader>
           <DialogTitle
             className="flex justify-center items-center gap-2 pb-5 text-xl border-b border-input text-green-600 dark:text-green-400"
@@ -52,11 +77,17 @@ export default function NewSaleReceipt({ open, setOpen, sale }: SaleRecipProps) 
             </div>
           </div>
           <div className="grid grid-cols-2 gap-3 mt-4">
-            <Button variant={'outline'}>
+            <Button
+              variant={'outline'}
+              onClick={handlePrint}
+            >
               <PrinterIcon size={20} />
               Imprimir
             </Button>
-            <Button variant={'secondary'}>
+            <Button
+              variant={'secondary'}
+              onClick={handleDownloadPDF}
+            >
               <DownloadSimpleIcon size={20} />
               PDF
             </Button>
@@ -64,7 +95,7 @@ export default function NewSaleReceipt({ open, setOpen, sale }: SaleRecipProps) 
 
           <DialogClose asChild>
             <Button
-              className="w-full mt-6"
+              className="w-full mt-6 bg-primary-light"
               size={'lg'}
             >
               Nueva venta

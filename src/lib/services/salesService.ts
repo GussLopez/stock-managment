@@ -60,11 +60,32 @@ export async function getSales() {
 export async function getSaleById(saleId: string) {
   const { data, error } = await supabase
     .from("sales")
-    .select("*")
+    .select(
+      `*,
+      sale_items (
+        id,
+        quantity,
+        price,
+        product_id,
+        products (
+          id,
+          name,
+          sku,
+          cost
+        )
+      )
+        `,
+    )
     .eq("id", saleId)
     .single();
 
   if (error) throw error;
 
   return data;
+}
+
+export async function DeleteSaleById(id: string) {
+  const { error } = await supabase.from("sales").delete().eq("id", id);
+
+  if (error) throw error;
 }

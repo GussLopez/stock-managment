@@ -1,4 +1,5 @@
 'use client';
+import DeleteSaleDialog from "@/components/sales/DaleteSaleDialog";
 import SaleReceipt from "@/components/sales/SaleReceipt";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,17 +16,20 @@ import {
   NotePencilIcon,
   PackageIcon,
   ReceiptIcon,
-  TrashIcon,
   TrendUpIcon,
   UserCircleIcon,
 } from "@phosphor-icons/react";
 import { useQuery } from "@tanstack/react-query";
-import { Ban, FileClock } from "lucide-react";
+import { Ban, FileClock, Trash2 } from "lucide-react";
 import { useState } from "react";
 
-export default function ReportesPage() {
-  const [open, setOpen] = useState(false);
-  const [selectedSale, setSelectedSale] = useState<Sale | null>(null)
+export default function HistorialPage() {
+  type ModalState =
+    | { type: "edit"; sale: Sale }
+    | { type: "view"; sale: Sale }
+    | { type: "delete"; saleId: string }
+    | null
+  const [modal, setModal] = useState<ModalState>(null)
   const { data, isLoading } = useQuery({
     queryKey: ["sales-reports"],
     queryFn: async () => {
@@ -34,7 +38,14 @@ export default function ReportesPage() {
     },
     retry: 1,
   })
-  console.log(selectedSale);
+  /* const openEdit = (sale: Sale) =>
+    setModal({ type: "edit", sale }) */
+
+  const openView = (sale: Sale) =>
+    setModal({ type: "view", sale })
+
+  const openDelete = (saleId: string) =>
+    setModal({ type: "delete", saleId })
   return (
     <div>
       <div className="flex items-center gap-3">
@@ -43,7 +54,6 @@ export default function ReportesPage() {
       </div>
       <div className="flex justify-between items-center mt-6">
         <RangeDatePicker />
-
         <div className="flex gap-2">
           <Button variant={'outline'}>
             <FileTextIcon size={20} weight="bold" />
@@ -51,7 +61,7 @@ export default function ReportesPage() {
           </Button>
           <Button variant={'outline'}>
             <DownloadSimpleIcon size={20} weight="bold" />
-            PDF Lista
+            CSV
           </Button>
         </div>
       </div>
@@ -186,10 +196,9 @@ export default function ReportesPage() {
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-3 mt-4">
-                    <Button variant={"outline"} onClick={() => {
-                      setSelectedSale(sale);
-                      setOpen(true);
-                    }}>
+                    <Button
+                      variant={"outline"}
+                      onClick={() => openView(sale)}>
                       <ReceiptIcon size={20} />
                       Recibo
                     </Button>
@@ -208,8 +217,9 @@ export default function ReportesPage() {
                     <Button
                       variant={'ghost'}
                       className="bg-red-500 hover:bg-red-600 hover:text-white text-white dark:hover:bg-red-600/90"
+                      onClick={() => openDelete(sale.id)}
                     >
-                      <TrashIcon size={20} />
+                      <Trash2 />
                       Eliminar
                     </Button>
                   </div>
@@ -219,11 +229,25 @@ export default function ReportesPage() {
           })}
         </div>
       </div>
-      {selectedSale && open && (
+      {modal?.type === "view" && (
         <SaleReceipt
-          sale={selectedSale}
-          open={open}
-          setOpen={setOpen}
+          open
+          sale={modal.sale}
+          onClose={() => setModal(null)}
+        />
+      )}
+      {/* {modal?.type === "view" && (
+        <ViewProductModal
+          open
+          product={modal.product}
+          onClose={() => setModal(null)}
+        />
+      )} */}
+      {modal?.type === "delete" && (
+        <DeleteSaleDialog
+          open
+          saleId={modal.saleId}
+          onClose={() => setModal(null)}
         />
       )}
     </div>
