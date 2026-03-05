@@ -1,10 +1,8 @@
-import { File, FileText, Image } from "lucide-react";
+import { FileText, Image } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Tabs, TabsContent, TabsContents, TabsList, TabsTrigger } from "../animate-ui/components/animate/tabs";
 import { Product } from "@/types";
-import { useQuery } from "@tanstack/react-query";
-import { getProductById } from "@/lib/services/productService";
-import { CubeIcon, FileTextIcon, PackageIcon, StackIcon, StackMinusIcon, TagIcon, TextboxIcon, TrendUpIcon } from "@phosphor-icons/react";
+import { CubeIcon, StackIcon, StackMinusIcon, TagIcon, TextboxIcon, TrendUpIcon } from "@phosphor-icons/react";
 import { Badge } from "../ui/badge";
 interface ProductModalProps {
   open: boolean
@@ -13,15 +11,6 @@ interface ProductModalProps {
 }
 
 export default function ViewProductModal({ open, onClose, product }: ProductModalProps) {
-  const productId = product?.id;
-
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["product", productId],
-    queryFn: () => getProductById(productId!),
-    enabled: open && !!productId,
-    staleTime: 0,
-  });
-
   const profit = (product?.price ?? 0) - (product?.cost ?? 0);
   const isProfit = profit >= 0;
 
