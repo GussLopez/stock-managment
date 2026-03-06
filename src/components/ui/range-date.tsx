@@ -14,10 +14,7 @@ import { type DateRange } from "react-day-picker"
 import { es } from "date-fns/locale"
 
 export function RangeDatePicker() {
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(new Date().getFullYear(), 0, 20),
-    to: addDays(new Date(new Date().getFullYear(), 0, 20), 20),
-  })
+  const [date, setDate] = React.useState<DateRange | undefined>()
 
   return (
     <div className="w-60">
@@ -39,7 +36,7 @@ export function RangeDatePicker() {
                 format(date.from, "LLL dd, y", { locale: es })
               )
             ) : (
-              <span>Pick a date</span>
+              <span>Selecciona una fecha</span>
             )}
           </Button>
         </PopoverTrigger>
