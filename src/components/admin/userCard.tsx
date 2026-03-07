@@ -1,0 +1,122 @@
+'use client';
+import { UserIcon } from "@phosphor-icons/react";
+import { Badge } from "../ui/badge";
+import { ChevronDown, Edit, Mail, Shield, Trash2 } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
+import { Button } from "../ui/button";
+import { AnimatePresence, motion } from "motion/react";
+import { useState } from "react";
+
+interface UserCardProps {
+  user: {
+    business_id: string;
+    created_at: string | null;
+    full_name: string | null;
+    id: string;
+    role: string;
+    email: string;
+  }
+}
+
+const gradientVariants = {
+  admin: 'from-orange-400 to-red-600',
+  seller: 'from-cyan-400 to-blue-600',
+  stockMan: 'from-yellow-400 to-amber-600',
+}
+export default function UserCard({ user }: UserCardProps) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="rounded-md overflow-hidden bg-facent">
+      <div className={`h-24 w-full bg-linear-to-br relative
+         ${user.role === 'admin' && gradientVariants.admin || user.role === 'seller' && gradientVariants.seller || user.role === 'stock-man' && gradientVariants.stockMan}`
+      }>
+        <div className="absolute top-4 right-4">
+          <Badge variant={'secondary'}>
+            {user.role === 'admin' && 'Administrador'}
+            {user.role === 'seller' && 'Vendedor'}
+            {user.role === 'stock-man' && 'Almacenista'}
+          </Badge>
+        </div>
+        <div className="absolute -bottom-10 left-4">
+          <div className="h-20 w-20 flex justify-center items-center rounded-full border-4 border-input overflow-hidden ring-2 ring-input/40 bg-accent">
+            <UserIcon size={40} weight="bold" className="text-muted-foreground" />
+          </div>
+        </div>
+      </div>
+      <div className="px-4 pt-12 pb-6">
+        <p className="text-lg font-semibold">{user.full_name}</p>
+        <div className="flex items-center gap-1.5 mt-2 text-sm text-muted-foreground">
+          <Mail size={13} />
+          <p>{user.email}</p>
+        </div>
+        <div className="p-3 rounded-md bg-background mt-3">
+          <Collapsible open={open} onOpenChange={setOpen}>
+            <CollapsibleTrigger asChild>
+              <div className="w-full flex justify-between text-muted-foreground">
+                <div className="flex items-center gap-1">
+                  <div>
+                    <Shield size={15} />
+                  </div>
+                  <span className="text-xs uppercase tracking-widest font-bold">Acceso</span>
+                </div>
+                <motion.div
+                  animate={{ rotate: open ? 180 : 0 }}
+                  transition={{ duration: 0.3, ease: "easeInOut" }}
+                >
+                  <ChevronDown size={20} />
+                </motion.div>
+              </div>
+            </CollapsibleTrigger>
+            <AnimatePresence initial={false}>
+
+              {open && (
+                <CollapsibleContent forceMount asChild>
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
+                    className="overflow-hidden"
+                  >
+                    <div className="py-4">
+                      <ul className="text-xs space-y-2 pl-4">
+                        <li>Inventario</li>
+                        <li>Ventas</li>
+                        <li>Historial de ventas</li>
+                        <li>Reportes</li>
+                        <li>Operaciones</li>
+                      </ul>
+                      <p className="text-sm mt-4 font-medium border-t pt-2">Acceso completo</p>
+                    </div>
+                  </motion.div>
+                </CollapsibleContent>
+              )}
+            </AnimatePresence>
+          </Collapsible>
+        </div>
+      </div>
+      <div className="px-4 pb-4 flex gap-3 items-stretch">
+        <div className="w-4/5">
+          <Button
+            className="w-full"
+            size={'lg'}
+            variant={'outline'}
+          >
+            <Edit size={40} />
+            Editar
+          </Button>
+        </div>
+        <div className="w-1/5">
+          <Button
+            className="w-full text-red-500 hover:border-red-400 hover:bg-red-400/20 hover:text-red-500  dark:hover:bg-red-600/10 dark:hover:text-red-500"
+            size={'icon-lg'}
+            variant={'outline'}
+          >
+            <Trash2 size={40} className="size-4.5" />
+            <span className="sr-only">Eliminar un usuario</span>
+          </Button>
+        </div>
+      </div>
+    </div>
+  )
+}
