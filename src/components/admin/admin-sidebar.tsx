@@ -1,4 +1,4 @@
-"use client";;
+"use client"
 import * as React from "react"
 import {
   ArrowRightLeft,
@@ -8,11 +8,9 @@ import {
   DollarSign,
   FileClock,
   GalleryVerticalEnd,
-  Grid2x2Check,
   LayoutTemplate,
   Map,
   Package,
-  PieChart,
   Settings2,
   Users,
 } from "lucide-react";
@@ -30,6 +28,10 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import { NavSettings } from "./nav-settings";
+import { useUserStore } from "@/store/UserStore";
+import { useQuery } from "@tanstack/react-query";
+import { getBusinessByUserId } from "@/lib/services/businessService";
+import { TeamSwitcher } from "./team-switcher";
 
 const data = {
   user: {
@@ -56,7 +58,7 @@ const data = {
     {
       title: "Historial",
       url: "/admin/historial",
-      icon: FileClock ,
+      icon: FileClock,
       items: [
         {
           title: "History",
@@ -154,21 +156,7 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuButton
-            size="lg"
-            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-          >
-            <div className="bg-primary text-white flex aspect-square size-8 items-center justify-center rounded-lg">
-              <Package className="size-5" />
-            </div>
-            <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">{data.team.name}</span>
-              <span className="truncate text-xs">{data.team.plan}</span>
-            </div>
-            <ChevronsUpDown className="ml-auto" />
-          </SidebarMenuButton>
-        </SidebarMenu>
+        <TeamSwitcher />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
