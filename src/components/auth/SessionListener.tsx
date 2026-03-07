@@ -11,7 +11,7 @@ export default function SessionListener() {
   useEffect(() => {
     const getSession = async () => {
       const { data } = await supabase.auth.getUser();
-
+      console.log(data);
       if (data.user) {
         setUser({
           id: data.user.id,

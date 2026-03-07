@@ -9,9 +9,9 @@ import { PackageIcon } from "@phosphor-icons/react"
 import { Spinner } from "../ui/spinner"
 import { Checkbox } from "../ui/checkbox"
 import { useForm } from "react-hook-form"
-import Swal from "sweetalert2"
 import ErrorMessage from "../ui/error-message"
 import { useRouter } from "next/navigation"
+import { sileo } from "sileo";
 
 interface RegisterProps {
   user: User | null
@@ -35,7 +35,7 @@ export default function Register({ user }: RegisterProps) {
     defaultValues: initialValues
   })
 
-  const handleLogin = async (formData: RegisterForm) => {
+  const handleRegister = async (formData: RegisterForm) => {
     try {
       setLoading(true);
       const { email, password, name } = formData;
@@ -45,24 +45,24 @@ export default function Register({ user }: RegisterProps) {
         options: {
           emailRedirectTo: "http://localhost:3000/auth/callback",
           data: {
-            name
+            name,
+            email,
+            role: 'owner'
           }
         }
       })
       setLoading(false);
       if (error) {
-        Swal.fire({
-          icon: "error",
+        sileo.error({
           title: "Oopss...",
-          text: "Ocurrio un error al registrarte"
+          description: "Ocurrio un error al registrarte"
         });
       }
       console.log('ERROR: ', error);
       if (!error) {
-        Swal.fire({
-          icon: "success",
+        sileo.success({
           title: "Cuenta creada",
-          text: "Revisa tu correo para confirmar tu cuenta"
+          description: "Inicia sesión con tus credenciales"
         });
       }
     } catch (error) {
@@ -78,7 +78,7 @@ export default function Register({ user }: RegisterProps) {
           <h1 className="mb-1 text-3xl font-semibold">Crea una cuenta</h1>
           <p className="text-sm text-gray-600 dark:text-neutral-200">¿Ya tienes cuenta? <Link className="text-primary underline font-medium" href={'/auth/login'}>Inicia sesión</Link></p>
         </div>
-        <form onSubmit={handleSubmit(handleLogin)} className="space-y-3">
+        <form onSubmit={handleSubmit(handleRegister)} className="space-y-3">
           <div>
             <label
               className="block text-sm font-medium mb-2"
