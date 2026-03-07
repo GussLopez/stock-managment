@@ -26,21 +26,14 @@ export async function createEmploye({
       email,
       password,
       email_confirm: true,
+      user_metadata: {
+        name,
+        role,
+        business_id
+      }
     });
-
+  
   if (userError) throw userError;
-
-  const userId = userData.user.id;
-
-  const { error: profileError } = await supabase.from("profiles").insert({
-    id: userId,
-    full_name: name,
-    email,
-    role,
-    business_id,
-  });
-
-  if (profileError) throw profileError;
 
   return { success: true };
 }
