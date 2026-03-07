@@ -35,9 +35,9 @@ export default function AuthCallback() {
 
   return (
     <div className="flex flex-col items-center justify-center col-span-8">
-      <p className="font-bold text-3xl text-gray-700">Verificando cuenta...</p>
+      <p className="font-bold text-3xl text-accent-foreground">Verificando cuenta...</p>
       <div className="mt-10">
-        <Spinner className="size-8 text-gray-400" />
+        <Spinner className="size-8 text-muted-foreground" />
       </div>
     </div>
   );
