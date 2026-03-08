@@ -11,6 +11,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { useBusinessStore } from "@/store/BusinessStore";
 import { Employe } from "@/types";
 import { UserIcon, UserPlusIcon } from "@phosphor-icons/react";
+import { useQueryClient } from "@tanstack/react-query";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -20,6 +21,8 @@ export default function CreateUser() {
   const businessId = useBusinessStore(state => state.id);
   const [isVisible, setIsVisible] = useState(false);
   const [loading, setLoading] = useState(false);
+  const queryClient = useQueryClient();
+  const [open, setOpen] = useState(false);
 
   const { register, handleSubmit, control, setValue, formState: { errors } } = useForm<Employe>({
     defaultValues: {
@@ -54,6 +57,8 @@ export default function CreateUser() {
           title: 'Empleado creado',
           description: 'Comparte las credenciales para que pueda acceder'
         })
+        queryClient.invalidateQueries({ queryKey: ["business-users"]});
+        setOpen(false);
       }
       setLoading(false);
     } catch (error) {
@@ -62,7 +67,7 @@ export default function CreateUser() {
     }
   }
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <AnimatedBtn>
           <UserPlusIcon size={20} weight="bold" />
