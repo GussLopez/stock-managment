@@ -21,19 +21,32 @@ export async function createEmploye({
   role,
   business_id,
 }: CreateEmployeProps) {
-  const { data: userData, error: userError } =
-    await supabase.auth.admin.createUser({
-      email,
-      password,
-      email_confirm: true,
-      user_metadata: {
-        name,
-        role,
-        business_id
-      }
-    });
-  
+  const { error: userError } = await supabase.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+    user_metadata: {
+      name,
+      role,
+      business_id,
+    },
+  });
+
   if (userError) throw userError;
+
+  return { success: true };
+}
+
+export async function deleteEmploye(userId: string) {
+  const { error: profileError } = await supabase
+    .from("profiles")
+    .delete()
+    .eq("id", userId);
+
+  if (profileError) throw profileError;
+  const { error: authError } = await supabase.auth.admin.deleteUser(userId);
+
+  if (authError) throw authError;
 
   return { success: true };
 }
