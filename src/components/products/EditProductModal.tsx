@@ -70,7 +70,7 @@ export default function EditProductModal({ open, onClose, product }: EditModalPr
     onSuccess: () => {
       setLoadig(false);
       queryClient.invalidateQueries({ queryKey: ["StockProducts"] })
-      sileo.show({
+      sileo.success({
         title: 'Cambios guardados',
         description: 'Cambios guardados correctamente',
         autopilot: false,

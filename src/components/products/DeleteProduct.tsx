@@ -74,7 +74,7 @@ export function DeleteProduct({ open, onClose, productId }: ProductModalProps) {
                 <Spinner />
                 Eliminando
               </>
-            ) : 'Delete'}
+            ) : 'Eliminar'}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
