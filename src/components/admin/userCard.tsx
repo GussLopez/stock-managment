@@ -6,6 +6,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/colla
 import { Button } from "../ui/button";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
+import { editEmploye } from "@/app/admin/usuarios/page";
 
 interface UserCardProps {
   user: {
@@ -16,6 +17,8 @@ interface UserCardProps {
     role: string;
     email: string;
   }
+  onEdit: (employe: editEmploye) => void;
+  onDelete: (employeId: string) =>  void;
 }
 
 const gradientVariants = {
@@ -23,7 +26,7 @@ const gradientVariants = {
   seller: 'from-cyan-400 to-blue-600',
   stockMan: 'from-yellow-400 to-amber-600',
 }
-export default function UserCard({ user }: UserCardProps) {
+export default function UserCard({ user, onEdit, onDelete }: UserCardProps) {
   const [open, setOpen] = useState(false);
   return (
     <div className="rounded-md overflow-hidden bg-facent">
@@ -101,6 +104,12 @@ export default function UserCard({ user }: UserCardProps) {
             className="w-full"
             size={'lg'}
             variant={'outline'}
+            onClick={() => onEdit({
+              id: user.id,
+              name: user.full_name!,
+              email: user.email!,
+              role: user.role!,
+            })}
           >
             <Edit size={40} />
             Editar
@@ -111,6 +120,7 @@ export default function UserCard({ user }: UserCardProps) {
             className="w-full text-red-500 hover:border-red-400 hover:bg-red-400/20 hover:text-red-500  dark:hover:bg-red-600/10 dark:hover:text-red-500"
             size={'icon-lg'}
             variant={'outline'}
+            onClick={() => onDelete(user.id)}
           >
             <Trash2 size={40} className="size-4.5" />
             <span className="sr-only">Eliminar un usuario</span>
