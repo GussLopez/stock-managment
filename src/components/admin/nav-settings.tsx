@@ -25,6 +25,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 
 export function NavSettings({
   settings,
@@ -36,7 +37,8 @@ export function NavSettings({
   }[]
 }) {
   const { isMobile } = useSidebar()
-
+  const path = usePathname();
+  const activeClasses = 'text-primary bg-primary/10 hover:bg-primary/10! hover:text-primary!'
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Administración</SidebarGroupLabel>
@@ -44,7 +46,7 @@ export function NavSettings({
         {settings.map((item) => (
           <SidebarMenuItem key={item.name}>
             <SidebarMenuButton asChild>
-              <Link href={item.url}>
+              <Link href={item.url} className={`${path === item.url && activeClasses}`}>
                 <item.icon />
                 <span>{item.name}</span>
               </Link>
