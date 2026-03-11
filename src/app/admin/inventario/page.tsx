@@ -3,7 +3,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/animate-ui/components/
 import AddProduct from "@/components/products/AddProduct";
 import ProductTable from "@/components/products/ProductTable";
 import { ListDashesIcon, SquaresFourIcon } from "@phosphor-icons/react";
-import { Box, Search } from "lucide-react";
+import { Box, PackageSearch, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { getProducts } from "@/lib/services/productService";
 import { useQuery } from "@tanstack/react-query";
@@ -97,25 +97,35 @@ export default function InventarioPage() {
             <Spinner className="size-8" />
           </div>
         ) : (
-          <>
-            {data && view === "table" &&
-              <ProductTable
-                data={data}
-                totalInventario={totalInventario}
-                onEdit={openEdit}
-                onDelete={openDelete}
-                onView={openView}
-              />}
-            {data && view === "card" &&
-              <CardView
-                data={data}
-                totalInventario={totalInventario}
-                onEdit={openEdit}
-                onDelete={openDelete}
-                onView={openView}
-              />}
-          </>
-        )}
+          data?.length === 0 ? (
+            <div className="flex flex-col items-center justify-center max-w-sm gap-2 mx-auto py-10">
+              <div className="p-2 rounded-lg text-primary bg-primary/10">
+                <PackageSearch size={30} />
+              </div>
+              <p className="font-medium text-accent-foreground">Aún no hay productos</p>
+              <p className="text-sm/relaxed text-center text-muted-foreground px-6">Aún no has creado ningún producto. Empieza creando tu primer producto.</p>
+            </div>
+
+          ) : (
+            <>
+              {data && view === "table" &&
+                <ProductTable
+                  data={data}
+                  totalInventario={totalInventario}
+                  onEdit={openEdit}
+                  onDelete={openDelete}
+                  onView={openView}
+                />}
+              {data && view === "card" &&
+                <CardView
+                  data={data}
+                  totalInventario={totalInventario}
+                  onEdit={openEdit}
+                  onDelete={openDelete}
+                  onView={openView}
+                />}
+            </>
+          ))}
       </div>
       {modal?.type === "edit" && (
         <EditProductModal
