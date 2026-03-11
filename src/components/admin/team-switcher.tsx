@@ -35,7 +35,6 @@ export function TeamSwitcher() {
     enabled: !!userId,
     staleTime: 1000 * 60 * 30,
   })
-  console.log(businesses);
   React.useEffect(() => {
     if (businesses?.length) {
       const business = businesses[0];
