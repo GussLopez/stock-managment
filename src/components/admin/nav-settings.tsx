@@ -40,7 +40,7 @@ export function NavSettings({
   const path = usePathname();
   const activeClasses = 'text-primary bg-primary/10 hover:bg-primary/10! hover:text-primary!'
   return (
-    <SidebarGroup className="group-data-[collapsible=icon]:hidden">
+    <SidebarGroup>
       <SidebarGroupLabel>Administración</SidebarGroupLabel>
       <SidebarMenu>
         {settings.map((item) => (
