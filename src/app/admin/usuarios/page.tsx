@@ -7,7 +7,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { getUsers } from "@/lib/services/userService"
 import { Employe } from "@/types";
 import { useQuery } from "@tanstack/react-query"
-import { Users } from "lucide-react";
+import { UserRoundSearch, Users } from "lucide-react";
 import { useState } from "react";
 
 export interface editEmploye {
@@ -34,7 +34,7 @@ export default function UsuariosPage() {
   const openEdit = (employe: editEmploye) =>
     setModal({ type: "edit", employe })
 
-  const openDelete = (employeId: string) => 
+  const openDelete = (employeId: string) =>
     setModal({ type: "delete", employeId })
   return (
     <div>
@@ -47,9 +47,18 @@ export default function UsuariosPage() {
           <CreateUser />
         </div>
       </div>
-      {isLoading ? (
+      {isLoading && (
         <div className="flex justify-center mt-40">
           <Spinner className="size-7" />
+        </div>
+      )}
+      {data?.length === 0 ? (
+        <div className="flex flex-col items-center justify-center max-w-sm gap-2 mx-auto py-20">
+          <div className="p-2 rounded-lg text-primary bg-primary/10">
+            <UserRoundSearch size={30} />
+          </div>
+          <p className="font-medium text-accent-foreground">No hay ventas</p>
+          <p className="text-sm/relaxed text-center text-muted-foreground px-6">No se han creado ninguna venta en esta fecha. Empieza creando una venta.</p>
         </div>
       ) : (
 

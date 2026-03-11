@@ -55,16 +55,16 @@ export default function HistorialPage() {
       <div className="flex justify-between items-center mt-6">
         <RangeDatePicker />
         <div className="flex gap-2">
-          <Button 
-          variant={'outline'}
-          disabled={data?.length === 0}
+          <Button
+            variant={'outline'}
+            disabled={data?.length === 0}
           >
             <FileTextIcon size={20} weight="bold" />
             PDF Lista
           </Button>
-          <Button 
-          variant={'outline'}
-          disabled={data?.length === 0}
+          <Button
+            variant={'outline'}
+            disabled={data?.length === 0}
           >
             <DownloadSimpleIcon size={20} weight="bold" />
             CSV
