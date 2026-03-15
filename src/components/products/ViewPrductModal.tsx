@@ -1,4 +1,4 @@
-import { FileText, Image } from "lucide-react";
+import { Barcode, ClipboardCheck, ClipboardX, FileText, Image } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Tabs, TabsContent, TabsContents, TabsList, TabsTrigger } from "../animate-ui/components/animate/tabs";
 import { Product } from "@/types";
@@ -61,7 +61,6 @@ export default function ViewProductModal({ open, onClose, product }: ProductModa
                     {product?.description}
                   </DialogDescription>
                 </div>
-
                 <div className="mt-4 font-medium">
                   <div className="flex items-center justify-between py-3 border-b">
                     <div className="flex items-center gap-2">
@@ -153,6 +152,31 @@ export default function ViewProductModal({ open, onClose, product }: ProductModa
                   </div>
                 </div>
               </div>
+            </TabsContent>
+            <TabsContent value="detalles">
+              <div className="py-3">
+                <div className="grid grid-cols-12 mt-5 py-3 border-b border-input">
+                  <div className={`flex items-center pl-3 gap-2 col-span-6 font-medium text-accent-foreground`}>
+                    <Barcode size={20} />
+                    <p className="">Código de barras</p>
+                  </div>
+                  <p className={`col-span-4 col-start-9 text-sm text-end pr-3 font-medium 
+                    ${!product?.barcode && 'font-normal text-sm italic text-gray-500' }`}>
+                    {product?.barcode ? product.barcode : 'No disponible'}
+                  </p>
+                </div>
+                <div className="grid grid-cols-12 mt-5 rounded-md">
+                  <div className={`flex items-center pl-3 gap-2 col-span-4 font-medium ${product?.is_active ? 'text-primary-light' : 'text-muted-foreground'}`}>
+                    {product?.is_active ? <ClipboardCheck size={20} /> : <ClipboardX size={20} />}
+                    <p className="text-accent-foreground">Estatus</p>
+                  </div>
+                  <p
+                    className={`col-span-4 col-start-9 text-sm text-end pr-3 font-medium `}>
+                    {product?.is_active ? 'Activo' : 'Inactivo'}
+                  </p>
+                </div>
+              </div>
+
             </TabsContent>
           </TabsContents>
         </Tabs>
