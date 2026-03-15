@@ -90,6 +90,7 @@ const SearchProductInput = ({ setProduct }: SearchProductProps) => {
                     })
                     setValue(currentValue === value ? '' : currentValue)
                     setOpen(false)
+                    setInputValue('')
                   }}
                 >
                   {product.name} ({product.sku}) - {product.model && product.model}
