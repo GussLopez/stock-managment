@@ -45,7 +45,7 @@ export default function ProductGeneral({ formData, onChange }: productGeneralPro
             id="description"
             className="min-h-20 lg:min-h-40 max-h-40"
             onChange={e => onChange({ description: e.target.value })}
-            value={formData.description}
+            value={formData.description!}
           />
         </div>
       </div>

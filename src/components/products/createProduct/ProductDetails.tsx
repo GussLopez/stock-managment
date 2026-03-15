@@ -19,10 +19,10 @@ export default function ProductDetails({ formData, onChange }: ProductDetailsPro
         <label htmlFor="productModel" className="font-semibold text-xs">Modelo</label>
         <Input
           id="productModel"
-          placeholder="Modelo" 
+          placeholder="Modelo"
           type="text"
           onChange={e => onChange({ model: e.target.value })}
-          value={formData.model}  
+          value={formData.model!}
         />
       </div>
       <div>
@@ -30,8 +30,13 @@ export default function ProductDetails({ formData, onChange }: ProductDetailsPro
         <Input id="productName" placeholder="Categoría" />
       </div>
       <div>
-        <label htmlFor="productName" className="font-semibold text-xs">Presentacion</label>
-        <Input id="productName" placeholder="100 g, 2 kg, 400 ml" />
+        <label htmlFor="unit" className="font-semibold text-xs">Presentacion</label>
+        <Input
+          id="unit"
+          placeholder="pieza, 100 g, 2 kg, 400 ml"
+          onChange={e => onChange({ unit: e.target.value })}
+          value={formData.unit!}
+        />
       </div>
     </div>
   )

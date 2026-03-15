@@ -27,11 +27,15 @@ export default function AddProduct() {
     min_stock: 0,
     sku: '',
     model: '',
-    image: null
+    image: null,
+    barcode: '',
+    unit: '',
+    is_active: true
   }
   const [formData, setFormData] = useState(initialFormData);
   const queryClient = useQueryClient();
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
   const updateForm = (data: Partial<ProductForm>) =>
     setFormData(prev => ({ ...prev, ...data }))
 
@@ -39,8 +43,9 @@ export default function AddProduct() {
     try {
       setLoading(true);
       await createProduct(formData);
-      queryClient.invalidateQueries({ queryKey: ["StockProducts"] });
+      queryClient.invalidateQueries({ queryKey: ["stock-products"] });
       setLoading(false);
+      setOpen(false);
       sileo.success({
         title: 'Producto guardado',
         description: 'El producto se creó y se guardó correctamente'
@@ -57,7 +62,7 @@ export default function AddProduct() {
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <CustomBtn>
           <Plus />
