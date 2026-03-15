@@ -1,11 +1,10 @@
-'use client';
+'use client'
 import UserCard from "@/components/admin/userCard";
 import CreateUser from "@/components/admin/users/CreateUserModal";
 import DeleteUserModal from "@/components/admin/users/DeleteUserModal";
 import EditUserModal from "@/components/admin/users/EditUserModal";
 import { Spinner } from "@/components/ui/spinner";
 import { getUsers } from "@/lib/services/userService"
-import { Employe } from "@/types";
 import { useQuery } from "@tanstack/react-query"
 import { UserRoundSearch, Users } from "lucide-react";
 import { useState } from "react";

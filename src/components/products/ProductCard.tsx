@@ -24,7 +24,7 @@ export default function ProductCard({ product, onEdit, onDelete, onView }: Produ
             <Button
               variant={'ghost'}
               size={'icon'}
-              className="rounded-full absolute right-3 top-3 text-neutral-400"
+              className="rounded-full absolute right-3 top-3 text-neutral-400 z-50"
             >
               <MoreVertical />
               <span className="sr-only">Opciones del producto</span>
@@ -64,7 +64,7 @@ export default function ProductCard({ product, onEdit, onDelete, onView }: Produ
           </div>
         ) : (
           <div
-            className="flex flex-col items-center gap-2 cursor-pointer"
+            className="w-full h-full flex flex-col items-center justify-center gap-2 cursor-pointer"
             onClick={() => onView(product)}
           >
             <Package className="size-10 stroke-[1.5] text- opacity-60" />

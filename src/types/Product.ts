@@ -10,6 +10,9 @@ export interface Product {
   sku: string;
   model: string | null;
   image: string | null;
+  barcode: string | null;
+  unit: string | null;
+  is_active: boolean;
 }
 
 export type ProductForm = Omit<Product, 'id' | 'business_id'>
