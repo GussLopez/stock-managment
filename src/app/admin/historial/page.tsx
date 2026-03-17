@@ -1,5 +1,7 @@
 'use client';
 import DeleteSaleDialog from "@/components/sales/DaleteSaleDialog";
+import EditSaleDialog from "@/components/sales/EditSaleDialog";
+import CancelSaleDialog from "@/components/sales/CancelSaleDialog";
 import SaleReceipt from "@/components/sales/SaleReceipt";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -28,6 +30,7 @@ export default function HistorialPage() {
     | { type: "edit"; sale: Sale }
     | { type: "view"; sale: Sale }
     | { type: "delete"; saleId: string }
+    | { type: "null"; saleId: string }
     | null
   const [modal, setModal] = useState<ModalState>(null)
   const { data, isLoading } = useQuery({
@@ -38,14 +41,17 @@ export default function HistorialPage() {
     },
     retry: 1,
   })
-  /* const openEdit = (sale: Sale) =>
-    setModal({ type: "edit", sale }) */
+  const openEdit = (sale: Sale) =>
+    setModal({ type: "edit", sale })
 
   const openView = (sale: Sale) =>
     setModal({ type: "view", sale })
 
   const openDelete = (saleId: string) =>
     setModal({ type: "delete", saleId })
+
+  const openNull = (saleId: string) =>
+    setModal({ type: "null", saleId })
   return (
     <div>
       <div className="flex items-center gap-3">
@@ -217,16 +223,20 @@ export default function HistorialPage() {
                         <ReceiptIcon size={20} />
                         Recibo
                       </Button>
-                      <Button variant={"outline"}>
+                      <Button
+                        variant={"outline"}
+                        onClick={() => openEdit(sale)}
+                      >
                         <NotePencilIcon size={20} />
                         Editar
                       </Button>
                       <Button
                         variant={"ghost"}
                         className="col-span-2 bg-amber-400 hover:bg-amber-500/80 dark:text-black dark:hover:bg-amber-400/90"
+                        onClick={() => openNull(sale.id)}
                       >
                         <Ban size={20} />
-                        Anular venta
+                        Cancelar venta
                       </Button>
 
                       <Button
@@ -252,15 +262,22 @@ export default function HistorialPage() {
           onClose={() => setModal(null)}
         />
       )}
-      {/* {modal?.type === "view" && (
-        <ViewProductModal
+      {modal?.type === "edit" && (
+        <EditSaleDialog
           open
-          product={modal.product}
+          sale={modal.sale}
           onClose={() => setModal(null)}
         />
-      )} */}
+      )}
       {modal?.type === "delete" && (
         <DeleteSaleDialog
+          open
+          saleId={modal.saleId}
+          onClose={() => setModal(null)}
+        />
+      )}
+      {modal?.type === "null" && (
+        <CancelSaleDialog
           open
           saleId={modal.saleId}
           onClose={() => setModal(null)}
