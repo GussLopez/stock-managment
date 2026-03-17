@@ -49,6 +49,7 @@ export async function getSales() {
       )
     `,
     )
+    .eq("status", "completed")
     .order("created_at", { ascending: false })
     .limit(10);
 
@@ -86,6 +87,16 @@ export async function getSaleById(saleId: string) {
 
 export async function DeleteSaleById(id: string) {
   const { error } = await supabase.from("sales").delete().eq("id", id);
+
+  if (error) throw error;
+}
+
+
+export async function cancelSale(saleId: string, cancelReason: string) {
+  const { error } = await supabase.rpc("cancel_sale", {
+    p_sale_id: saleId,
+    p_cancel_reason: cancelReason
+  });
 
   if (error) throw error;
 }
