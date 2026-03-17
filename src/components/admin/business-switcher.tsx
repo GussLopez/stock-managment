@@ -24,7 +24,7 @@ import { getBusinessByUserId } from "@/lib/services/businessService"
 import { useBusinessStore } from "@/store/BusinessStore"
 import { Skeleton } from "../ui/skeleton"
 
-export function TeamSwitcher() {
+export function BusinessSwitcher() {
   const userId = useUserStore((state) => state.id);
   const { isMobile } = useSidebar()
   const setBussines = useBusinessStore(state => state.setBusiness)

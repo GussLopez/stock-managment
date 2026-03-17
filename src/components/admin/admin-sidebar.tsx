@@ -4,46 +4,23 @@ import {
   ArrowRightLeft,
   BookOpen,
   ChartNoAxesCombined,
-  ChevronsUpDown,
   DollarSign,
   FileClock,
-  GalleryVerticalEnd,
   LayoutTemplate,
-  Map,
   Package,
   Settings2,
+  Truck,
   Users,
 } from "lucide-react";
 
 import { NavMain } from "@/components/admin/nav-main"
 import { NavProjects } from "@/components/admin/nav-projects"
 import { NavUser } from "@/components/admin/nav-user"
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarRail,
-} from "@/components/ui/sidebar"
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@/components/ui/sidebar";
 import { NavSettings } from "./nav-settings";
-import { useUserStore } from "@/store/UserStore";
-import { useQuery } from "@tanstack/react-query";
-import { getBusinessByUserId } from "@/lib/services/businessService";
-import { TeamSwitcher } from "./team-switcher";
+import { BusinessSwitcher } from "./business-switcher";
 
 const data = {
-  user: {
-    name: "Gus",
-    email: "gus@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  team: {
-    name: "Stock Pro",
-    logo: GalleryVerticalEnd,
-    plan: "Premium",
-  },
   navMain: [
     {
       title: "Inicio",
@@ -133,9 +110,9 @@ const data = {
       icon: ArrowRightLeft,
     },
     {
-      name: "Travel",
-      url: "#",
-      icon: Map,
+      name: "Proveedores",
+      url: "/admin/proveedores",
+      icon: Truck,
     },
   ],
   settings: [
@@ -156,7 +133,7 @@ export function AdminSidebar({ ...props }: React.ComponentProps<typeof Sidebar>)
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher />
+        <BusinessSwitcher />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
