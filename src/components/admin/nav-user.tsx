@@ -39,6 +39,7 @@ export function NavUser() {
     router.push('/auth/login');
     router.refresh();
   }
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -50,18 +51,22 @@ export function NavUser() {
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={avatar} alt={nombres || 'avatar del usuario'} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className="rounded-lg">{nombres?.slice(0, 2).toUpperCase()}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                {!nombres || !email  ? (
+                {!nombres || !email ? (
                   <>
                     <Skeleton className="w-10 h-2" />
                     <Skeleton className="w-24 h-2 mt-2" />
                   </>
                 ) : (
                   <>
-                    <span className="truncate font-medium">{nombres}</span>
-                    <span className="truncate text-xs">{email}</span>
+                    <span
+                      className="truncate font-medium"
+                    >{nombres}</span>
+                    <span
+                      className="truncate text-xs"
+                    >{email}</span>
                   </>
                 )}
               </div>

@@ -1,4 +1,6 @@
 'use client'
+
+import { getProfileById } from "@/lib/services/userService";
 import { getSupabaseBrowserClient } from "@/lib/supabase/browser-client"
 import { useUserStore } from "@/store/UserStore";
 import { useEffect } from "react";
@@ -9,35 +11,36 @@ export default function SessionListener() {
   const clearUser = useUserStore((state) => state.clearUser);
 
   useEffect(() => {
-    const getSession = async () => {
-      const { data } = await supabase.auth.getUser();
-      console.log(data);
-      if (data.user) {
+    const fetchProfile = async (id: string) => {
+      const profile = await getProfileById(id);
+      if (profile) {
         setUser({
-          id: data.user.id,
-          email: data.user.email ?? "",
-          nombres: data.user.user_metadata.nombres ??
-            data.user.email ?? ""
+          id: profile.id,
+          email: profile.email,
+          nombres: profile.full_name || '',
+          role: profile.role
         });
       }
     }
 
-    getSession();
+    const initSession = async () => {
+      const { data } = await supabase.auth.getUser();
 
-    const {
-      data: { subscription }
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        setUser({
-           id: session.user.id,
-          email: session.user.email ?? "",
-          nombres: session.user.user_metadata.nombres ??
-            session.user.email ?? ""
-        })
-      } else {
-        clearUser();
+      if (data.user?.id) {
+        await fetchProfile(data.user.id);
       }
-    });
+    }
+    initSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (_event, session) => {
+
+        if (session?.user.id) {
+          await fetchProfile(session.user.id);
+        } else {
+          clearUser();
+        }
+      });
 
     return () => subscription.unsubscribe();
   }, [])
