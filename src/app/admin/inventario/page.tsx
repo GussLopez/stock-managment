@@ -15,13 +15,14 @@ import EditProductModal from "@/components/products/EditProductModal";
 import ViewProductModal from "@/components/products/ViewPrductModal";
 import { DeleteProduct } from "@/components/products/DeleteProduct";
 
+type ModalState =
+  | { type: "edit"; product: Product }
+  | { type: "view"; product: Product }
+  | { type: "delete"; product: Product }
+  | null
+
 export default function InventarioPage() {
   const [view, setView] = useState("table")
-  type ModalState =
-    | { type: "edit"; product: Product }
-    | { type: "view"; product: Product }
-    | { type: "delete"; product: Product }
-    | null
   const [modal, setModal] = useState<ModalState>(null)
 
   useEffect(() => {

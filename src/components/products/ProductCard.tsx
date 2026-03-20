@@ -87,7 +87,7 @@ export default function ProductCard({ product, onEdit, onDelete, onView }: Produ
             <p className="text-sm font-semibold text-foreground/80">${product.cost.toLocaleString()}</p>
           </div>
           <Separator orientation="vertical" className="h-7" />
-          <div className="flex-1 pl-4 text-end">
+          <div className="flex-1 text-end">
             <p className="text-[10px] uppercase tracking-wider font-bold text-muted-foreground/70">Venta</p>
             <p className="text-sm font-bold text-primary-light">${product.price.toLocaleString()}</p>
           </div>

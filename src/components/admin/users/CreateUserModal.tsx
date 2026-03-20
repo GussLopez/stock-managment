@@ -49,7 +49,6 @@ export default function CreateUser() {
     }
     try {
       setLoading(true);
-      console.log(formData);
       const { success } = await createEmploye(formData)
 
       if (success) {
@@ -57,7 +56,7 @@ export default function CreateUser() {
           title: 'Empleado creado',
           description: 'Comparte las credenciales para que pueda acceder'
         })
-        queryClient.invalidateQueries({ queryKey: ["business-users"]});
+        queryClient.invalidateQueries({ queryKey: ["business-users"] });
         setOpen(false);
       }
       setLoading(false);
