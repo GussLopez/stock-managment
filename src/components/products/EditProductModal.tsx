@@ -41,21 +41,29 @@ export default function EditProductModal({ open, onClose, product }: EditModalPr
     min_stock: 0,
     sku: '',
     model: '',
-    image: null
+    image: null,
+    barcode: '',
+    is_active: true,
+    unit: '',
+    supplier_id: null
   });
  
   useEffect(() => {
     if (product) {
       setFormData({
-        name: product.name || '',
-        description: product.description || '',
+        name: product.name,
+        description: product.description,
         price: product.price || 0,
         cost: product.cost || 0,
         stock: product.stock || 0,
         min_stock: product.min_stock || 0,
-        sku: product.sku || '',
-        model: product.model || '',
-        image: null
+        sku: product.sku,
+        model: product.model,
+        image: null,
+        barcode: product.barcode,
+        is_active: product.is_active,
+        unit: product.unit,
+        supplier_id: product.supplier_id
       });
     }
   }, [product]);
@@ -69,7 +77,7 @@ export default function EditProductModal({ open, onClose, product }: EditModalPr
     },
     onSuccess: () => {
       setLoadig(false);
-      queryClient.invalidateQueries({ queryKey: ["StockProducts"] })
+      queryClient.invalidateQueries({ queryKey: ["stock-products"] })
       sileo.success({
         title: 'Cambios guardados',
         description: 'Cambios guardados correctamente',
