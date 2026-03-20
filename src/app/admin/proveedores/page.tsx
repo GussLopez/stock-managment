@@ -54,7 +54,7 @@ export default function ProveedoresPage() {
       <div className="mt-10">
         {isLoading ? (
           <div className="flex justify-center items-center h-60">
-            <Spinner className="size-8" />
+            <Spinner className="size-7" />
           </div>
         ) : (
           data?.length === 0 ? (

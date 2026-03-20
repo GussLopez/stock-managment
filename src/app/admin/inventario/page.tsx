@@ -95,7 +95,7 @@ export default function InventarioPage() {
       <div className="mt-6">
         {isLoading ? (
           <div className="flex justify-center items-center h-90">
-            <Spinner className="size-8" />
+            <Spinner className="size-7" />
           </div>
         ) : (
           data?.length === 0 ? (
