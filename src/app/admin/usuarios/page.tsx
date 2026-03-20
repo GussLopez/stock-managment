@@ -56,8 +56,8 @@ export default function UsuariosPage() {
           <div className="p-2 rounded-lg text-primary bg-primary/10">
             <UserRoundSearch size={30} />
           </div>
-          <p className="font-medium text-accent-foreground">No hay ventas</p>
-          <p className="text-sm/relaxed text-center text-muted-foreground px-6">No se han creado ninguna venta en esta fecha. Empieza creando una venta.</p>
+          <p className="font-medium text-accent-foreground">No hay usuarios</p>
+          <p className="text-sm/relaxed text-center text-muted-foreground px-6">No hay usuarios registrados. Empieza creando un usuario.</p>
         </div>
       ) : (
 
