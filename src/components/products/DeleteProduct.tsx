@@ -28,7 +28,7 @@ export function DeleteProduct({ open, onClose, productId }: ProductModalProps) {
       await deleteProduct(productId!);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["StockProducts"] });
+      queryClient.invalidateQueries({ queryKey: ["stock-products"] });
       sileo.success({
         title: 'Producto eliminado',
         description: 'El producto se elimino correctamente',
