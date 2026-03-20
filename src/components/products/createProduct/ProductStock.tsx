@@ -1,18 +1,34 @@
 'use client'
 
+import AddSupplierDialog from "@/components/admin/suppliers/AddSupplierDialog";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { getBusinessSuppliers } from "@/lib/services/supplierService";
 import { ProductForm } from "@/types";
-import { ClipboardCheck, ClipboardX } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { Plus } from "lucide-react";
 import { useState } from "react";
 
 interface ProductPricesProps {
   formData: ProductForm;
   onChange: (data: any) => void;
 }
-
+type ModalState =
+  | { type: "create" }
+  | null
 export default function ProductPrices({ formData, onChange }: ProductPricesProps) {
-  const [isActive, setIsActive] = useState(true);
+  const [modal, setModal] = useState<ModalState>(null);
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["business-suppliers"],
+    queryFn: async () => {
+      const data = await getBusinessSuppliers()
+      return data;
+    },
+    retry: 1
+  })
+  
   return (
     <div className="grid grid-cols-2 gap-3 p-2">
       <div>
@@ -44,23 +60,56 @@ export default function ProductPrices({ formData, onChange }: ProductPricesProps
           value={formData.barcode!}
         />
       </div>
-      <label
-        htmlFor="isActive"
-        className="h-9.5 mt-6 flex justify-between items-center px-3 rounded-md border border-input has-data-[state=checked]:border-primary/50 relative transition duration-300"
-      >
-        <span className="flex items-center gap-2 text-xs font-medium">
-          {isActive ? <ClipboardCheck size={20} /> : <ClipboardX size={20} />}
-          {isActive ? 'Activo' : 'Inactivo'}
-        </span>
-        <Switch
-          id="isActive"
-          checked={isActive}
-          onCheckedChange={setIsActive}
-          onClick={() => onChange({ is_active: isActive })}
+      <div>
+        <label htmlFor="supplier" className="font-semibold text-xs">Proveedor</label>
+        <div className="flex gap-2">
+          <Select
+            value={formData.supplier_id?.toString() || 'ninguno'}
+            onValueChange={(value) => {
+              if (value === 'ninguno') {
+                onChange({ supplier_id: null })
+              } else {
+                onChange({ supplier_id: Number(value) })
+              }
+            }}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent position="popper">
+              <SelectGroup>
+                <SelectLabel>Proveedores</SelectLabel>
+                <SelectItem value="ninguno" defaultChecked>Ninguno</SelectItem>
+                {isLoading && <p className="p-2 text-sm  text-muted-foreground">Cargando...</p>}
+                {data?.length === 0 ? (
+                  <p className="p-2 text-sm  text-muted-foreground">No hay proveedores registrados</p>
+                ) : (
+                  data?.map((supp) => (
+                    <SelectItem key={supp.id} value={supp.id.toString()}>{supp.name}</SelectItem>
+                  ))
+                )}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <Button
+            size={'icon'}
+            variant={'outline'}
+            onClick={() => setModal({ type: "create" })}
+          >
+            <Plus size={20} />
+          </Button>
+        </div>
+      </div>
+
+      {modal?.type === "create" && (
+        <AddSupplierDialog
+          open
+          onClose={() => setModal(null)}
+          onCraeted={(supplier) => {
+            onChange({ supplier_id: supplier.id })
+          }}
         />
-
-      </label>
-
+      )}
     </div>
   )
 }

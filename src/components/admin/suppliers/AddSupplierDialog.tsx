@@ -10,7 +10,7 @@ import { ChevronDown } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Textarea } from "../../ui/textarea";
 import { useForm } from "react-hook-form";
-import { SupplierForm } from "@/types";
+import { Supplier, SupplierForm } from "@/types";
 import { useBusinessStore } from "@/store/BusinessStore";
 import { sileo } from "sileo";
 import { createSupplier } from "@/lib/services/supplierService";
@@ -20,9 +20,10 @@ import { Spinner } from "../../ui/spinner";
 interface AddSuplierProps {
   open: boolean;
   onClose: () => void;
+  onCraeted?: (supplier: Supplier) => void;
 }
 
-export default function AddSupplierDialog({ open, onClose }: AddSuplierProps) {
+export default function AddSupplierDialog({ open, onClose, onCraeted }: AddSuplierProps) {
   const [collapOpen, setCollapOpen] = useState(false);
   const businessId = useBusinessStore(state => state.id);
   const [loading, setLoading] = useState(false);
@@ -58,16 +59,18 @@ export default function AddSupplierDialog({ open, onClose }: AddSuplierProps) {
     }
     try {
       setLoading(true);
-      const { success } = await createSupplier(formData)
+      const newSupplier = await createSupplier(formData)
 
-      if (success) {
-        sileo.success({
-          title: 'Proveedor creado',
-          description: 'El proveedor se creó correctamente',
-          autopilot: false
-        });
-        queryClient.invalidateQueries({ queryKey: ["business-suppliers"] });
-      }
+      sileo.success({
+        title: 'Proveedor creado',
+        description: 'El proveedor se creó correctamente',
+        autopilot: false
+      });
+
+      queryClient.invalidateQueries({ queryKey: ["business-suppliers"] });
+
+      onCraeted?.(newSupplier);
+      
       setLoading(false);
       onClose();
     } catch (error) {

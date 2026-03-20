@@ -4,11 +4,15 @@ import { getSupabaseBrowserClient } from "../supabase/browser-client";
 const supabase = getSupabaseBrowserClient();
 
 export async function createSupplier(supplier: SupplierForm) {
-  const { error } = await supabase.from("suppliers").insert(supplier);
+  const { data, error } = await supabase
+  .from("suppliers")
+  .insert(supplier)
+  .select()
+  .single()
 
   if (error) throw error;
 
-  return { success: true };
+  return data;
 }
 
 export async function getBusinessSuppliers() {

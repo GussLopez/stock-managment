@@ -30,7 +30,8 @@ export default function AddProduct() {
     image: null,
     barcode: '',
     unit: '',
-    is_active: true
+    is_active: true,
+    supplier_id: null
   }
   const [formData, setFormData] = useState(initialFormData);
   const queryClient = useQueryClient();
