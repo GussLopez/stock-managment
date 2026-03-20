@@ -1,43 +1,100 @@
 'use client';
 import { PlusIcon } from "@phosphor-icons/react";
-import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
-import { Button } from "../ui/button";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../ui/collapsible";
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "../../ui/dialog";
+import { Label } from "../../ui/label";
+import { Input } from "../../ui/input";
+import { Button } from "../../ui/button";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "../../ui/collapsible";
 import { AnimatePresence, motion } from "motion/react";
-import { ChevronDown } from "lucide-react";
-import { useState } from "react";
-import { Textarea } from "../ui/textarea";
+import { ChevronDown, ClipboardCheck, ClipboardX } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Textarea } from "../../ui/textarea";
+import { useForm } from "react-hook-form";
+import { Supplier, SupplierForm } from "@/types";
+import { useBusinessStore } from "@/store/BusinessStore";
+import { sileo } from "sileo";
+import { createSupplier, updateSupplier } from "@/lib/services/supplierService";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Spinner } from "../../ui/spinner";
+import { Switch } from "@/components/ui/switch";
 
 interface AddSuplierProps {
   open: boolean;
-  setOpen: (open: boolean) => void;
+  onClose: () => void;
+  supplier: Supplier
 }
 
-export default function AddSupplierDialog({ open, setOpen }: AddSuplierProps) {
+export default function EditSupplierDialog({ open, onClose, supplier }: AddSuplierProps) {
   const [collapOpen, setCollapOpen] = useState(false);
+  const queryClient = useQueryClient();
 
+  const { register, handleSubmit, reset, watch, setValue, formState: { errors } } = useForm<SupplierForm>()
+  const isActive = watch("is_active");
+
+  useEffect(() => {
+    if (supplier) {
+      reset({
+        name: supplier.name,
+        contact_name: supplier.contact_name || null,
+        email: supplier.email || null,
+        address: supplier.address || null,
+        is_active: supplier.is_active ?? true,
+        phone: supplier.phone || null,
+        notes: supplier.notes || null,
+      });
+    }
+  }, [supplier, reset]);
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: async (formData: SupplierForm) => {
+      {
+        console.log(isActive);
+        console.log(formData);
+        await updateSupplier(supplier.id, formData)
+      }
+    },
+    onSuccess: () => {
+      sileo.success({
+        title: 'Cambios guardados',
+        description: 'Los datos del proveedor se actualizaron correctamente',
+        autopilot: false
+      });
+      queryClient.invalidateQueries({ queryKey: ["business-suppliers"] });
+      onClose();
+    },
+    onError: () => {
+      sileo.error({
+        title: 'Error al editar el proveedor',
+        description: 'Ocurrio un error, por favor intenta más tarde'
+      })
+    }
+  })
+
+  const onSave = (supplier: SupplierForm) => {
+    mutate(supplier)
+  }
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={value => !value && onClose()}>
       <DialogContent aria-describedby="Crear un nuevo proveedor">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <PlusIcon size={20} weight="bold" />
-            Añadir nuevo proveedor
+          <DialogTitle>
+            Editar proveedor
           </DialogTitle>
         </DialogHeader>
-        <form className="space-y-4 mt-5">
-
+        <form onSubmit={handleSubmit(onSave)} className="space-y-4 mt-5">
           <div>
             <Label
               htmlFor="supplierName"
               className="mb-2.5"
-            >Nombre / Empresa</Label>
+            >Nombre / Empresa<span className="text-red-500">*</span></Label>
             <Input
               id="supplierName"
               type="text"
               placeholder="Ej. Distribuidora central"
+              aria-invalid={errors.name?.message ? 'true' : 'false'}
+              {...register('name', {
+                required: 'El nombre es requerido'
+              })}
             />
           </div>
           <div>
@@ -49,6 +106,7 @@ export default function AddSupplierDialog({ open, setOpen }: AddSuplierProps) {
               id="contactName"
               type="text"
               placeholder="Ej. Juan Pérez"
+              {...register("contact_name")}
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -61,6 +119,7 @@ export default function AddSupplierDialog({ open, setOpen }: AddSuplierProps) {
                 id="supplierPhone"
                 type="phone"
                 placeholder="+52 998"
+                {...register("phone")}
               />
             </div>
             <div>
@@ -72,8 +131,26 @@ export default function AddSupplierDialog({ open, setOpen }: AddSuplierProps) {
                 id="supplierEmail"
                 type="text"
                 placeholder="Ej. proveedor@gmail.com"
+                {...register("email")}
               />
             </div>
+          </div>
+          <div>
+            <label
+              htmlFor="isActive"
+              className="py-3 mt-6 flex justify-between items-center px-3 rounded-md border border-input has-data-[state=checked]:border-primary/50 relative transition duration-300"
+            >
+              <span className="flex items-center gap-2 text-xs font-medium">
+                {isActive ? <ClipboardCheck size={20} /> : <ClipboardX size={20} />}
+                {isActive ? 'Activo' : 'Inactivo'}
+              </span>
+              <Switch
+                id="isActive"
+                checked={isActive}
+                onCheckedChange={value => setValue("is_active", value)}
+              />
+
+            </label>
           </div>
           <div className="px-2 rounded-md bg-facent">
             <Collapsible open={collapOpen} onOpenChange={setCollapOpen}>
@@ -109,6 +186,7 @@ export default function AddSupplierDialog({ open, setOpen }: AddSuplierProps) {
                           type="text"
                           placeholder="Ej. Av Colosio 77500 Cancún"
                           className="bg-white"
+                          {...register("address")}
                         />
                       </div>
                       <div className="px-2 pb-4">
@@ -120,6 +198,7 @@ export default function AddSupplierDialog({ open, setOpen }: AddSuplierProps) {
                           id="supplierNotes"
                           placeholder="Ej. Horarios, condiciones de pago, detalles del servicio"
                           className="max-h-30 bg-white"
+                          {...register("notes")}
                         />
                       </div>
                     </motion.div>
@@ -132,8 +211,16 @@ export default function AddSupplierDialog({ open, setOpen }: AddSuplierProps) {
             <DialogClose asChild>
               <Button variant={'outline'}>Cancelar</Button>
             </DialogClose>
-            <Button>
-              Guardar Proveedor
+            <Button
+              disabled={isPending}
+              type="submit"
+            >
+              {isPending ? (
+                <>
+                  <Spinner />
+                  Guardando
+                </>
+              ) : 'Guardar cambios'}
             </Button>
           </DialogFooter>
         </form>
