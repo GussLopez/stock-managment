@@ -48,6 +48,7 @@ export default function ProductTable({ data, isLoading, totalInventario, onEdit,
             data?.map(product => {
               const stockColor = product.stock <= product.min_stock
                 ? "text-red-500 bg-red-50 dark:bg-red-950/30"
+                : product.stock <= product.min_stock + 5 ? "text-amber-500 bg-amber-100 dark:bg-amber-950/30"
                 : "text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30";
               return (
                 <TableRow key={product.id} className="group transition-colors">
@@ -83,7 +84,7 @@ export default function ProductTable({ data, isLoading, totalInventario, onEdit,
                     ${product.price.toLocaleString()}
                   </TableCell>
                   <TableCell className="text-center">
-                    <span className={`px-2 py-0.5 rounded-full text-[11px] font-bold ${stockColor}`}>
+                    <span className={`px-2 py-0.5 rounded-full text-sm font-bold ${stockColor}`}>
                       {product.stock} <span className="text-[9px] opacity-70">UN</span>
                     </span>
                   </TableCell>
