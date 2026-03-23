@@ -14,6 +14,7 @@ export interface Product {
   unit: string | null;
   is_active: boolean;
   supplier_id: number | null
+  categorie_id: number | null
 }
 
 export type ProductForm = Omit<Product, 'id' | 'business_id'>
