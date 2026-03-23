@@ -34,7 +34,7 @@ export default function ProductDetails({ formData, onChange }: ProductDetailsPro
     retry: 1,
     refetchOnWindowFocus: false
   })
-  
+
   return (
 
     <div className="lg:grid lg:grid-cols-2 space-y-2 gap-3 p-2">
@@ -103,7 +103,7 @@ export default function ProductDetails({ formData, onChange }: ProductDetailsPro
       </div>
       <label
         htmlFor="isActive"
-        className="h-9.5 mt-6 flex justify-between items-center px-3 rounded-md border border-input has-data-[state=checked]:border-primary/50 relative transition duration-300"
+        className="h-9.5 flex justify-between items-center px-3 rounded-md border border-input has-data-[state=checked]:border-primary/50 relative transition duration-300"
       >
         <span className="flex items-center gap-2 text-xs font-medium">
           {isActive ? <ClipboardCheck size={20} /> : <ClipboardX size={20} />}
