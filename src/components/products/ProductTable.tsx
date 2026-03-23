@@ -131,7 +131,7 @@ export default function ProductTable({ data, isLoading, totalInventario, onEdit,
         <TableFooter className="bg-muted/20">
           <TableRow>
             <TableCell colSpan={4} className="text-right font-semibold py-4">Total Inventario</TableCell>
-            <TableCell className="text-right font-black text-lg text-[oklch(0.705_0.213_47.604)] py-4">
+            <TableCell className="text-right font-black text-lg text-primary-light py-4">
               ${totalInventario.toLocaleString()} <span className="text-[10px] font-normal text-muted-foreground">MXN</span>
             </TableCell>
             <TableCell />

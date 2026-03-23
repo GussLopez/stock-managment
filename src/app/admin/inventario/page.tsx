@@ -61,7 +61,7 @@ export default function InventarioPage() {
     setModal({ type: "delete", product })
 
   return (
-    <div>
+    <div className="relative">
       <div className="flex justify-between">
         <div className="flex items-center gap-3">
           <Box size={30} />
@@ -148,6 +148,14 @@ export default function InventarioPage() {
           productId={modal.product.id}
           onClose={() => setModal(null)}
         />
+      )}
+      {view === "card" && (
+        <div className="fixed bottom-10 right-10 px-5 py-3 border border-input shadow-lg rounded-lg bg-white">
+          <p className="font-semibold">Total Inventario</p>
+          <p className="font-black text-lg text-primary-light">
+            ${totalInventario.toLocaleString()} <span className="text-[10px] font-normal text-muted-foreground">MXN</span>
+          </p>
+        </div>
       )}
     </div >
   )
