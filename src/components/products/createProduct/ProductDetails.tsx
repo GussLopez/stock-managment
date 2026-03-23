@@ -1,27 +1,49 @@
 'use client'
 
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { getBusinessCategories } from "@/lib/services/categoriesService";
 import { ProductForm } from "@/types";
-import { ClipboardCheck, ClipboardX } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { ClipboardCheck, ClipboardX, Plus } from "lucide-react";
 import { useState } from "react";
+import AddCategorieDialog from "../categories/AddCategorieDialog";
 
 interface ProductDetailsProps {
   formData: ProductForm;
   onChange: (data: any) => void;
 }
 
+type ModalState =
+  | { type: "create" }
+  | null
+
 export default function ProductDetails({ formData, onChange }: ProductDetailsProps) {
   const [isActive, setIsActive] = useState(true);
+  const [modal, setModal] = useState<ModalState>(null);
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["business-categories"],
+    queryFn: async () => {
+      const data = await getBusinessCategories();
+      return data;
+    },
+    retry: 1,
+    refetchOnWindowFocus: false
+  })
+  
   return (
 
     <div className="lg:grid lg:grid-cols-2 space-y-2 gap-3 p-2">
       <div>
-        <label htmlFor="productBrand" className="font-semibold text-xs">Marca</label>
+        <Label htmlFor="productBrand" className="font-semibold text-xs">Marca</Label>
         <Input id="productBrand" placeholder="Marca" />
       </div>
       <div>
-        <label htmlFor="productModel" className="font-semibold text-xs">Modelo</label>
+        <Label htmlFor="productModel" className="font-semibold text-xs">Modelo</Label>
         <Input
           id="productModel"
           placeholder="Modelo"
@@ -31,13 +53,53 @@ export default function ProductDetails({ formData, onChange }: ProductDetailsPro
         />
       </div>
       <div>
-        <label htmlFor="unit" className="font-semibold text-xs">Presentacion</label>
+        <Label htmlFor="unit" className="font-semibold text-xs">Presentacion</Label>
         <Input
           id="unit"
           placeholder="pieza, 100 g, 2 kg, 400 ml"
           onChange={e => onChange({ unit: e.target.value })}
           value={formData.unit!}
         />
+      </div>
+      <div>
+        <Label htmlFor="unit" className="font-semibold text-xs">Categoria</Label>
+        <div className="flex gap-2">
+          <Select
+            value={formData.categorie_id?.toString() || 'ninguno'}
+            onValueChange={(value) => {
+              if (value === 'ninguno') {
+                onChange({ categorie_id: null })
+              } else {
+                onChange({ categorie_id: Number(value) })
+              }
+            }}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent position="popper">
+              <SelectGroup>
+                <SelectLabel>Categorias</SelectLabel>
+                <SelectItem value="ninguno" defaultChecked>Ninguno</SelectItem>
+                {isLoading && <p className="p-2 text-sm  text-muted-foreground">Cargando...</p>}
+                {data?.length === 0 ? (
+                  <p className="p-2 text-sm  text-muted-foreground">No hay categorías registrados</p>
+                ) : (
+                  data?.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id.toString()}>{cat.name}</SelectItem>
+                  ))
+                )}
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+          <Button
+            size={'icon'}
+            variant={'outline'}
+            onClick={() => setModal({ type: "create" })}
+          >
+            <Plus size={20} />
+          </Button>
+        </div>
       </div>
       <label
         htmlFor="isActive"
@@ -55,6 +117,16 @@ export default function ProductDetails({ formData, onChange }: ProductDetailsPro
         />
 
       </label>
+
+      {modal?.type === "create" && (
+        <AddCategorieDialog
+          open
+          onClose={() => setModal(null)}
+          onCraeted={(categorie) => {
+            onChange({ categorie_id: categorie.id })
+          }}
+        />
+      )}
     </div>
   )
 }
