@@ -21,8 +21,11 @@ import { ProductItem } from '@/types'
 
 interface SearchProductProps {
   setProduct: (product: ProductItem) => void;
+  btnSize?: 'xs' | 'sm' | 'lg' | 'default';
+  btnClass: string;
+  placeholder?: string;
 }
-const SearchProductInput = ({ setProduct }: SearchProductProps) => {
+const SearchProductInput = ({ setProduct, btnClass, btnSize = 'default', placeholder }: SearchProductProps) => {
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState('');
   const [inputValue, setInputValue] = useState('');
@@ -48,14 +51,15 @@ const SearchProductInput = ({ setProduct }: SearchProductProps) => {
       <PopoverTrigger asChild>
         <Button
           variant='outline'
+          size={btnSize}
           role='combobox'
           aria-expanded={open}
-          className='w-full max-w-xs justify-between'
+          className={btnClass}
           aria-label='Framework combobox'
         >
           {selectedProduct
             ? (`${selectedProduct.name} (${selectedProduct.sku}) - ${selectedProduct.model}`)
-            : 'Buscar por nombre o SKU...'}
+            : placeholder ? placeholder : 'Buscar por nombre o SKU...'}
           <ChevronsUpDownIcon className='opacity-50' />
         </Button>
       </PopoverTrigger>

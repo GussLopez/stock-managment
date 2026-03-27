@@ -89,7 +89,10 @@ export default function VentasPage() {
           <div className='flex gap-5 mt-4 text-xs font-medium text-muted-foreground'>
             <div className='w-full max-w-80'>
               <label htmlFor='searhProduct'>Buscar producto</label>
-              <ComboboxSearchProduct setProduct={setProduct} />
+              <ComboboxSearchProduct
+                setProduct={setProduct}
+                btnClass='w-full max-w-xs justify-between'
+              />
             </div>
             <div className='w-full max-w-60'>
               <label>Precio de venta</label>
