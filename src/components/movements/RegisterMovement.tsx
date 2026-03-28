@@ -21,6 +21,7 @@ import { useEffect, useState } from "react"
 import { NumberField } from "react-aria-components";
 import { sileo } from "sileo";
 import AddSupplierDialog from "../admin/suppliers/AddSupplierDialog";
+import { AnimatePresence, motion } from "motion/react";
 
 interface ItemsProps {
   tempId: string;
@@ -133,7 +134,7 @@ export default function RegisterMovement() {
     },
     retry: 1
   })
-
+  const MotionTableRow = motion.create(TableRow);
   return (
     <div>
       <div className="mt-10 flex gap-4">
@@ -181,7 +182,7 @@ export default function RegisterMovement() {
             <PopoverContent align="start" className="w-85 p-0">
               <Textarea
                 placeholder="Detalles adicionales..."
-                className="min-h-20 max-h-50 p-4 focus-visible:ring-0 border-0  shadow-none"
+                className="min-h-20 max-h-50 p-4 focus-visible:ring-0 border-0 shadow-none"
                 onChange={e => setNotes(e.target.value)}
                 value={notes}
               />
@@ -218,41 +219,50 @@ export default function RegisterMovement() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {items.map((item, i) => (
-              <TableRow key={i}>
-                <TableCell className="text-lg font-semibold">
-                  {item.product_name}
-                </TableCell>
-                <TableCell>
-                  <Badge variant={'secondary'} className="font-mono">{item.product_sku}</Badge>
-                </TableCell>
-                <TableCell className="max-w-15 overflow-hidden">
-                  <NumberField
-                    aria-label="Cantidad del producto"
-                    value={item.quantity}
-                    minValue={1}
-                    maxValue={999}
-                    onChange={(value) =>
-                      updateQuantity(item.tempId, value)
-                    }
-                    className='w-full max-w-xs space-y-2'
-                  >
-                    <InputQuantity />
-                  </NumberField>
+            <AnimatePresence mode="popLayout">
+              {items.map((item) => (
+                <MotionTableRow
+                  key={item.tempId}
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: .3 }}
+                  className="bg-background"
+                >
+                  <TableCell className="text-lg font-semibold">
+                    {item.product_name}
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={'secondary'} className="font-mono">{item.product_sku}</Badge>
+                  </TableCell>
+                  <TableCell className="max-w-15 overflow-hidden">
+                    <NumberField
+                      aria-label="Cantidad del producto"
+                      value={item.quantity}
+                      minValue={1}
+                      maxValue={999}
+                      onChange={(value) =>
+                        updateQuantity(item.tempId, value)
+                      }
+                      className='w-full max-w-xs space-y-2'
+                    >
+                      <InputQuantity />
+                    </NumberField>
 
-                </TableCell>
-                <TableCell className="text-end">
-                  <Button
-                    variant={'ghost'}
-                    className="bg-red-600/10 text-red-500"
-                    size={'icon-sm'}
-                    onClick={() => deleteItem(item.tempId)}
-                  >
-                    <Trash size={20} />
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+                  </TableCell>
+                  <TableCell className="text-end">
+                    <Button
+                      variant={'ghost'}
+                      className="bg-red-600/10 text-red-500"
+                      size={'icon-sm'}
+                      onClick={() => deleteItem(item.tempId)}
+                    >
+                      <Trash size={20} />
+                    </Button>
+                  </TableCell>
+                </MotionTableRow>
+              ))}
+            </AnimatePresence>
             <TableRow>
               <TableCell colSpan={5}>
                 <SearchProductInput

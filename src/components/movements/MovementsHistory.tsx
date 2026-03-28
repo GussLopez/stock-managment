@@ -64,8 +64,8 @@ export default function MovementsHistory() {
                   <TableCell>
                     <Badge className="capitalize">{movement.type}</Badge>
                   </TableCell>
-                  <TableCell className="truncate">
-                    {movement.products.sku} - {movement.products.name}
+                  <TableCell className="truncate text-muted-foreground">
+                    <span className="font-mono text-black">#{movement.products.sku}</span> - {movement.products.name}
                   </TableCell>
                   <TableCell className="font-semibold">{movement.quantity}</TableCell>
                   <TableCell className="truncate max-w-20 text-muted-foreground">{movement.reference || '-'}</TableCell>
