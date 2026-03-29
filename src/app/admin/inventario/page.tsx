@@ -150,7 +150,7 @@ export default function InventarioPage() {
         />
       )}
       {view === "card" && (
-        <div className="fixed bottom-10 right-10 px-5 py-3 border border-input shadow-lg rounded-lg bg-white">
+        <div className="fixed bottom-10 right-10 px-5 py-3 border border-input shadow-lg rounded-lg bg-white dark:bg-black">
           <p className="font-semibold">Total Inventario</p>
           <p className="font-black text-lg text-primary-light">
             ${totalInventario.toLocaleString()} <span className="text-[10px] font-normal text-muted-foreground">MXN</span>
