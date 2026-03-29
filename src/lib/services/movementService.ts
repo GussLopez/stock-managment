@@ -24,9 +24,7 @@ export async function createMovement(movements: MovementInsert[]) {
 }
 
 export async function getMovements() {
-  const { data, error } = await supabase
-    .from("inventory_movements")
-    .select(`
+  const { data, error } = await supabase.from("inventory_movements").select(`
         *,
         profiles (
           full_name
@@ -40,4 +38,13 @@ export async function getMovements() {
   if (error) throw error;
 
   return data;
+}
+
+export async function deleteMovement(movementId: number) {
+  const { error } = await supabase
+    .from("inventory_movements")
+    .delete()
+    .eq("id", movementId);
+
+  if (error) throw error;
 }
